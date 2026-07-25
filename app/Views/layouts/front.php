@@ -154,6 +154,7 @@ $baseUrl   = rtrim(setting('site_url', '') ?: guess_base_url(), '/');
   <a href="<?= e(base_url('/page/terms')) ?>" class="text-muted">Terms</a> ·
   <a href="<?= e(base_url('/page/privacy')) ?>" class="text-muted">Privacy</a> ·
   <a href="<?= e(base_url('/page/cancellation')) ?>" class="text-muted">Cancellation</a> ·
+  <a href="<?= e(base_url('/reviews')) ?>" class="text-muted">Reviews</a> ·
   <a href="<?= e(base_url('/page/about')) ?>" class="text-muted">About</a>
   <div class="mt-3 mb-2">
     <div class="fw-bold" style="color:var(--ink)">Partner with us</div>

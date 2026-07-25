@@ -87,10 +87,12 @@ $siteName = setting('site_name', 'Dwarka Rental');
             </div>
             <div class="p-2 p-md-3">
               <div class="fw-semibold text-truncate"><?= e($v['name']) ?></div>
+              <?php if ((int)($v['review_count'] ?? 0) > 0): $ra = round((float)$v['avg_rating'], 1); ?>
               <div class="d-flex align-items-center gap-1 my-1" style="color:var(--gold);font-size:12px">
-                <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
-                <span class="text-muted ms-1">4.5</span>
+                <?php for ($i=1;$i<=5;$i++): ?><i class="bi bi-star<?= $ra >= $i ? '-fill' : ($ra >= $i-0.5 ? '-half' : '') ?>"></i><?php endfor; ?>
+                <span class="text-muted ms-1"><?= $ra ?> (<?= (int)$v['review_count'] ?>)</span>
               </div>
+              <?php endif; ?>
               <div class="d-flex align-items-end justify-content-between">
                 <div><span class="price-tag fs-5"><?= money($v['price_day']) ?></span><span class="text-muted small">/day</span></div>
               </div>

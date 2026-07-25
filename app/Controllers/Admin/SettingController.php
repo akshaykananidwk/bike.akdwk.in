@@ -17,6 +17,7 @@ class SettingController extends Controller
         'default_language', 'timezone', 'gst_percent', 'advance_percent', 'booking_fee',
         'auto_cancel_minutes', 'attribution_days', 'min_withdrawal', 'otp_enabled',
         'shop_registration_enabled', 'agency_registration_enabled', 'registration_auto_approve', 'voice_greeting_enabled',
+        'packages_enabled', 'reviews_enabled', 'reviews_auto_approve', 'google_review_url',
         'commission_type', 'commission_value', 'commission_on_base_only',
         'primary_color', 'secondary_color', 'contact_mobile', 'contact_whatsapp',
         'contact_email', 'map_link', 'maintenance_mode',
@@ -35,7 +36,8 @@ class SettingController extends Controller
                 $v = Request::post($k);
                 // Checkboxes: absent means 0
                 if (in_array($k, ['commission_on_base_only','maintenance_mode','otp_enabled','payments_to_platform',
-                    'shop_registration_enabled','agency_registration_enabled','registration_auto_approve','voice_greeting_enabled','razorpay_enabled','upi_enabled','cash_enabled','phonepe_enabled','cashfree_enabled'], true)) {
+                    'shop_registration_enabled','agency_registration_enabled','registration_auto_approve','voice_greeting_enabled',
+                    'packages_enabled','reviews_enabled','reviews_auto_approve','razorpay_enabled','upi_enabled','cash_enabled','phonepe_enabled','cashfree_enabled'], true)) {
                     $v = Request::post($k) ? '1' : '0';
                 }
                 Settings::set($k, $v);

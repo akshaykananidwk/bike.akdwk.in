@@ -17,6 +17,7 @@ class Cron
             'return_reminders'=> self::returnReminders(),
             'auto_cancelled'  => self::autoCancelUnpaid(),
             'funds_released'  => \App\Services\WalletService::releaseHeld(),
+            'review_requests' => \App\Services\ReviewService::requestPending(),
             'update_check'    => self::dailyUpdateCheck(),
         ];
     }

@@ -19,6 +19,8 @@ $router->get('/vehicles', 'Front\VehicleController@index');
 $router->get('/vehicle/{id}', 'Front\VehicleController@show');
 $router->get('/rent/{slug}', 'Front\SeoLandingController@show');   // SEO location pages
 $router->get('/packages', 'Front\PackageController@index');
+$router->any('/review/{token}', 'Front\ReviewController@show');
+$router->get('/reviews', 'Front\ReviewController@index');
 $router->get('/package/{slug}', 'Front\PackageController@show');
 $router->post('/package/{slug}/book', 'Front\PackageController@book');
 $router->get('/page/{slug}', 'Front\PageController@show');
@@ -77,6 +79,10 @@ $router->group(['prefix' => '/admin', 'middleware' => ['AdminAuth']], function (
     $r->any('/packages/create', 'Admin\PackageController@create');
     $r->any('/packages/{id}/edit', 'Admin\PackageController@edit');
     $r->post('/packages/{id}/delete', 'Admin\PackageController@delete');
+
+    // Reviews
+    $r->get('/reviews', 'Admin\ReviewController@index');
+    $r->post('/reviews/{id}/moderate', 'Admin\ReviewController@moderate');
 
     // Categories & Vehicles
     $r->any('/categories', 'Admin\CategoryController@index');

@@ -12,7 +12,10 @@ class HomeController extends Controller
         $gu = Lang::isGujarati();
         $categories = Database::fetchAll("SELECT * FROM {p}categories WHERE status='active' ORDER BY sort_order, id");
         $vehicles = Database::fetchAll(
-            "SELECT v.*, c.name AS category_name FROM {p}vehicles v
+            "SELECT v.*, c.name AS category_name,
+                    (SELECT AVG(r.rating) FROM {p}reviews r WHERE r.vehicle_id=v.id AND r.status='approved') AS avg_rating,
+                    (SELECT COUNT(*) FROM {p}reviews r WHERE r.vehicle_id=v.id AND r.status='approved') AS review_count
+             FROM {p}vehicles v
              LEFT JOIN {p}categories c ON c.id=v.category_id
              WHERE v.status='active' ORDER BY v.sort_order, v.id DESC LIMIT 8"
         );

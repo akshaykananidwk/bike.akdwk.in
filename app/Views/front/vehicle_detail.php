@@ -19,6 +19,12 @@
   </div>
   <div class="col-md-6">
     <h4><?= e($vehicle['name']) ?></h4>
+    <?php if (($rating['count'] ?? 0) > 0): ?>
+      <div style="color:#f59e0b;font-size:14px" class="mb-1">
+        <?php for ($i=1;$i<=5;$i++): ?><i class="bi bi-star<?= $rating['avg'] >= $i ? '-fill' : ($rating['avg'] >= $i-0.5 ? '-half' : '') ?>"></i><?php endfor; ?>
+        <span class="text-muted small ms-1"><?= $rating['avg'] ?> · <?= $rating['count'] ?> review<?= $rating['count']>1?'s':'' ?></span>
+      </div>
+    <?php endif; ?>
     <div class="text-muted mb-2"><?= e($vehicle['category_name']) ?> · <?= e($vehicle['brand']) ?> <?= e($vehicle['model']) ?></div>
     <div class="d-flex gap-2 flex-wrap mb-3">
       <span class="badge bg-light text-dark border"><i class="bi bi-gear"></i> <?= e(str_replace('_',' ',$vehicle['transmission'])) ?></span>
@@ -36,3 +42,20 @@
     <a href="<?= e(base_url('/book/'.$vehicle['id'])) ?>" class="btn btn-primary btn-lg w-100 tap"><i class="bi bi-calendar-check"></i> <?= e(__('book_now')) ?></a>
   </div>
 </div>
+
+<?php if (!empty($reviews)): ?>
+<div class="card border-0 shadow-soft mt-3" style="border-radius:16px"><div class="card-body">
+  <h2 class="section-title" style="font-size:18px">Customer reviews</h2>
+  <?php foreach ($reviews as $r): ?>
+    <div class="border-bottom py-2">
+      <div style="color:#f59e0b;font-size:13px">
+        <?php for($i=1;$i<=5;$i++): ?><i class="bi bi-star<?= (int)$r['rating']>=$i?'-fill':'' ?>"></i><?php endfor; ?>
+        <span class="fw-semibold text-dark ms-1"><?= e($r['customer_name']) ?></span>
+        <span class="text-muted small ms-1"><?= e(date('d M Y', strtotime($r['created_at']))) ?></span>
+      </div>
+      <?php if ($r['comment']): ?><div class="small text-muted"><?= nl2br(e($r['comment'])) ?></div><?php endif; ?>
+      <?php if ($r['admin_reply']): ?><div class="small text-primary mt-1">↳ <?= e($r['admin_reply']) ?></div><?php endif; ?>
+    </div>
+  <?php endforeach; ?>
+</div></div>
+<?php endif; ?>

@@ -39,7 +39,9 @@ class VehicleController extends Controller
         };
 
         $vehicles = Database::fetchAll(
-            "SELECT v.*, c.name AS category_name, c.name_gu AS category_name_gu, c.slug AS category_slug
+            "SELECT v.*, c.name AS category_name, c.name_gu AS category_name_gu, c.slug AS category_slug,
+                    (SELECT AVG(r.rating) FROM {p}reviews r WHERE r.vehicle_id=v.id AND r.status='approved') AS avg_rating,
+                    (SELECT COUNT(*) FROM {p}reviews r WHERE r.vehicle_id=v.id AND r.status='approved') AS review_count
              FROM {p}vehicles v LEFT JOIN {p}categories c ON c.id=v.category_id
              WHERE {$where} ORDER BY {$order}",
             $params
@@ -81,19 +83,32 @@ class VehicleController extends Controller
         }
         $images = Database::fetchAll("SELECT * FROM {p}vehicle_images WHERE vehicle_id=? ORDER BY sort_order", [$id]);
 
+        // Real customer ratings (never invented).
+        $rating  = \App\Services\ReviewService::vehicleRating($id);
+        $reviews = Database::fetchAll(
+            "SELECT * FROM {p}reviews WHERE vehicle_id=? AND status='approved' ORDER BY id DESC LIMIT 10",
+            [$id]
+        );
+
+        $ld = [
+            '@context' => 'https://schema.org', '@type' => 'Product',
+            'name' => $vehicle['name'], 'description' => strip_tags((string)$vehicle['description']),
+            'offers' => ['@type' => 'Offer', 'price' => $vehicle['price_day'], 'priceCurrency' => setting('currency_code', 'INR')],
+        ];
+        if ($rating['count'] > 0) {
+            $ld['aggregateRating'] = ['@type' => 'AggregateRating', 'ratingValue' => $rating['avg'], 'reviewCount' => $rating['count']];
+        }
         $meta = '<meta name="description" content="' . e(strip_tags((string)$vehicle['description'])) . '">'
             . '<meta property="og:title" content="' . e($vehicle['name']) . '">'
-            . '<script type="application/ld+json">' . json_encode([
-                '@context' => 'https://schema.org', '@type' => 'Product',
-                'name' => $vehicle['name'], 'description' => strip_tags((string)$vehicle['description']),
-                'offers' => ['@type' => 'Offer', 'price' => $vehicle['price_day'], 'priceCurrency' => setting('currency_code', 'INR')],
-            ], JSON_UNESCAPED_UNICODE) . '</script>';
+            . '<script type="application/ld+json">' . json_encode($ld, JSON_UNESCAPED_UNICODE) . '</script>';
 
         return $this->view('front/vehicle_detail', [
-            'title'   => $vehicle['name'] . ' — ' . setting('site_name', 'Dwarka Rental'),
+            'title'   => $vehicle['name'] . ' on rent in Dwarka — ' . setting('site_name', 'Dwarka Rental'),
             'meta'    => $meta,
             'vehicle' => $vehicle,
             'images'  => $images,
+            'rating'  => $rating,
+            'reviews' => $reviews,
             'gu'      => Lang::isGujarati(),
         ], 'front');
     }
