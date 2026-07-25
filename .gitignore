@@ -22,3 +22,6 @@ Thumbs.db
 *.log
 /tmp/
 /_srv_router.php
+
+# Installer lock is created at runtime, never shipped
+/install/.htaccess
