@@ -76,6 +76,24 @@ class BookingController extends Controller
         return $this->json(['ok' => true, 'quote' => Pricing::quote($vehicle, $pickup, $drop)]);
     }
 
+    /** AJAX: validate a coupon against the quoted base amount. */
+    public function applyCoupon(array $params): string
+    {
+        $vehicle = $this->loadVehicle((int)($params['id'] ?? 0));
+        if (!$vehicle) { return $this->json(['ok' => false, 'error' => 'Vehicle not found.'], 404); }
+        $pickup = (string)Request::post('pickup');
+        $drop = (string)Request::post('drop');
+        if (!$this->validWindow($pickup, $drop)) { return $this->json(['ok' => false, 'error' => 'Select time first.'], 422); }
+        $quote = Pricing::quote($vehicle, $pickup, $drop);
+        $res = \App\Services\CouponService::validate((string)Request::post('code'), $quote['base']);
+        if (!$res['ok']) { return $this->json(['ok' => false, 'error' => $res['error']]); }
+        $newQuote = Pricing::quote($vehicle, $pickup, $drop, $res['discount']);
+        return $this->json([
+            'ok' => true, 'discount' => $res['discount'], 'quote' => $newQuote,
+            'quote_html' => $this->quoteHtml($newQuote),
+        ]);
+    }
+
     private function createBooking(array $vehicle): string
     {
         $pickup = (string)Request::post('pickup');
@@ -124,8 +142,17 @@ class BookingController extends Controller
             if ($idRes['ok']) { $idPath = $idRes['path']; }
         }
 
+        // Coupon (optional).
+        $discount = 0.0; $couponId = null;
+        $couponCode = trim((string)Request::post('coupon_code'));
+        if ($couponCode !== '') {
+            $base = Pricing::quote($vehicle, $pickup, $drop)['base'];
+            $cr = \App\Services\CouponService::validate($couponCode, $base);
+            if ($cr['ok']) { $discount = $cr['discount']; $couponId = (int)$cr['coupon']['id']; }
+        }
+
         // Pricing.
-        $quote = Pricing::quote($vehicle, $pickup, $drop);
+        $quote = Pricing::quote($vehicle, $pickup, $drop, $discount);
 
         // Shop attribution: session first, then cookie, else direct.
         [$shopId, $source] = $this->resolveShop();
@@ -147,6 +174,7 @@ class BookingController extends Controller
             'deposit'             => $quote['deposit'],
             'tax_amount'          => $quote['gst'],
             'discount_amount'     => $quote['discount'],
+            'coupon_id'           => $couponId,
             'extra_charges'       => 0,
             'total_amount'        => $quote['total'],
             'advance_amount'      => $quote['advance'],
@@ -164,6 +192,8 @@ class BookingController extends Controller
             'status'              => 'pending_payment',
             'payment_status'      => 'unpaid',
         ]);
+
+        if ($couponId) { \App\Services\CouponService::redeem($couponId); }
 
         Session::set('booking_' . $code, $bookingId);
         Session::forget('otp_verified_mobile');

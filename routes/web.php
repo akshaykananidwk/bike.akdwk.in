@@ -23,6 +23,7 @@ $router->get('/page/{slug}', 'Front\PageController@show');
 $router->any('/book/{id}', 'Front\BookingController@start');
 $router->post('/book/{id}/availability', 'Front\BookingController@availability');
 $router->post('/book/{id}/quote', 'Front\BookingController@quote');
+$router->post('/book/{id}/coupon', 'Front\BookingController@applyCoupon');
 $router->any('/checkout/{code}', 'Front\BookingController@checkout');
 $router->post('/otp/send', 'Front\OtpController@send');
 $router->post('/otp/verify', 'Front\OtpController@verify');
@@ -132,3 +133,7 @@ $router->group(['prefix' => '/agency', 'middleware' => ['AgencyAuth']], function
 // --- SEO ------------------------------------------------------------------
 $router->get('/sitemap.xml', 'Front\SeoController@sitemap');
 $router->get('/robots.txt', 'Front\SeoController@robots');
+
+// --- PWA ------------------------------------------------------------------
+$router->get('/manifest.webmanifest', 'Front\PwaController@manifest');
+$router->get('/sw.js', 'Front\PwaController@serviceWorker');

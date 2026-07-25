@@ -37,6 +37,11 @@ $vname = $gu && $vehicle['name_gu'] ? $vehicle['name_gu'] : $vehicle['name'];
       </div>
       <div id="availMsg" class="mt-2"></div>
       <div id="quoteBox" class="mt-2"></div>
+      <div class="input-group input-group-sm mt-2" style="max-width:320px">
+        <input id="couponInput" name="coupon_code" class="form-control text-uppercase" placeholder="Coupon code (optional)">
+        <button type="button" class="btn btn-outline-primary" id="couponBtn">Apply</button>
+      </div>
+      <div id="couponMsg" class="small mt-1"></div>
     </div></div>
   </section>
 
@@ -158,6 +163,17 @@ $vname = $gu && $vehicle['name_gu'] ? $vehicle['name_gu'] : $vehicle['name'];
       '<tr class="fw-bold"><td>Pay now</td><td class="text-end"><?= e(setting('currency_symbol','₹')) ?>'+(q.advance||0)+'</td></tr>'+
       '</table>';
   }
+
+  // Coupon
+  document.getElementById('couponBtn').onclick=async function(){
+    const code=document.getElementById('couponInput').value.trim();
+    const msg=document.getElementById('couponMsg');
+    const pickup=document.getElementById('pickup').value, drop=document.getElementById('drop').value;
+    if(!code||!pickup||!drop){ msg.innerHTML='<span class="text-danger">Enter time & code first.</span>'; return; }
+    const r=await post('<?= e(base_url('/book/')) ?>'+VID+'/coupon',{code,pickup,drop});
+    if(r.ok){ msg.innerHTML='<span class="text-success">Coupon applied — you save '+'<?= e(setting('currency_symbol','₹')) ?>'+r.discount+'</span>'; document.getElementById('quoteBox').innerHTML='<div class="card card-body bg-light">'+r.quote_html+'</div>'; window._quote=r.quote; }
+    else { msg.innerHTML='<span class="text-danger">'+r.error+'</span>'; }
+  };
 
   // OTP
   document.getElementById('sendOtpBtn').onclick=async function(){

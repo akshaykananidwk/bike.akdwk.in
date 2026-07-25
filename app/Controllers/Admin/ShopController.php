@@ -139,10 +139,10 @@ class ShopController extends Controller
                 return $this->redirect('/admin/shops/import');
             }
             $handle = fopen($file['tmp_name'], 'r');
-            $header = fgetcsv($handle);
+            $header = fgetcsv($handle, 0, ',', '"', '');
             $header = array_map(fn($h) => strtolower(trim((string)$h)), $header ?: []);
             $count = 0;
-            while (($row = fgetcsv($handle)) !== false) {
+            while (($row = fgetcsv($handle, 0, ',', '"', '')) !== false) {
                 $r = array_combine($header, array_pad($row, count($header), null));
                 if (empty($r['name'])) { continue; }
                 $code = $r['code'] ?? $this->nextCode();

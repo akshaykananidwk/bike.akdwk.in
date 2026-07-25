@@ -97,9 +97,9 @@ class WalletController extends Controller
         header('Content-Type: text/csv');
         header('Content-Disposition: attachment; filename="statement-' . $shop['code'] . '.csv"');
         $out = fopen('php://output', 'w');
-        fputcsv($out, ['Date', 'Booking', 'Type', 'Amount', 'Note']);
+        fputcsv($out, ['Date','Booking','Type','Amount','Note'], ',', '"', '');
         foreach ($rows as $r) {
-            fputcsv($out, [$r['created_at'], $r['code'], $r['entry_type'], $r['amount'], $r['note']]);
+            fputcsv($out, [$r['created_at'],$r['code'],$r['entry_type'],$r['amount'],$r['note']], ',', '"', '');
         }
         fclose($out);
         return '';
