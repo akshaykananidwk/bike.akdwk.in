@@ -77,7 +77,7 @@
       <?php foreach (['razorpay_enabled'=>'Razorpay','upi_enabled'=>'UPI QR (agency-wise)','cash_enabled'=>'Cash / Pay at pickup','phonepe_enabled'=>'PhonePe','cashfree_enabled'=>'Cashfree'] as $k=>$l): ?>
         <div class="form-check form-switch"><input type="checkbox" name="<?= $k ?>" value="1" class="form-check-input" id="<?= $k ?>" <?= $chk($k) ?>><label class="form-check-label" for="<?= $k ?>"><?= e($l) ?></label></div>
       <?php endforeach; ?>
-      <small class="text-muted">Configure Razorpay keys in the Payments / Settings secret section; UPI QR is set per agency.</small>
+      <small class="text-muted">Enter Razorpay / PhonePe / Cashfree keys on the <a href="<?= e(base_url('/admin/payments/gateways')) ?>">Payment Gateways</a> page; UPI QR is set per agency.</small>
     </div></div></div>
 
     <div class="col-lg-6"><div class="card"><div class="card-header fw-bold">Contact &amp; System</div><div class="card-body row g-3">

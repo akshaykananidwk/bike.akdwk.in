@@ -99,6 +99,8 @@ $router->group(['prefix' => '/admin', 'middleware' => ['AdminAuth']], function (
 
     // Payments & payouts
     $r->get('/payments', 'Admin\PaymentController@index');
+    $r->any('/payments/gateways', 'Admin\PaymentController@gateways');
+    $r->post('/payments/test-gateway', 'Admin\PaymentController@testGateway');
     $r->post('/payments/{id}/verify', 'Admin\PaymentController@verify');
     $r->get('/payouts', 'Admin\PayoutController@index');
     $r->post('/payouts/{id}/process', 'Admin\PayoutController@process');

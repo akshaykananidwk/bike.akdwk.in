@@ -1,4 +1,9 @@
 <?php /** @var array $payments; string $status */ ?>
+<ul class="nav nav-tabs mb-3">
+  <li class="nav-item"><a class="nav-link active" href="<?= e(base_url('/admin/payments')) ?>">Payments</a></li>
+  <li class="nav-item"><a class="nav-link" href="<?= e(base_url('/admin/payments/gateways')) ?>">Gateways</a></li>
+  <li class="nav-item"><a class="nav-link" href="<?= e(base_url('/admin/payouts')) ?>">Payouts</a></li>
+</ul>
 <div class="d-flex gap-2 mb-3">
   <?php foreach (['' => 'All', 'pending_verification' => 'Pending Verification', 'paid' => 'Paid', 'failed' => 'Failed', 'refunded' => 'Refunded'] as $k => $l): ?>
     <a href="<?= e(base_url('/admin/payments' . ($k ? '?status=' . $k : ''))) ?>" class="btn btn-sm btn-<?= $status===$k?'primary':'outline-secondary' ?>"><?= e($l) ?></a>
