@@ -31,7 +31,7 @@ $router->get('/booking/{code}/invoice', 'Front\BookingController@invoice');
 $router->any('/my-bookings', 'Front\BookingController@myBookings');
 
 // Payments (Phase 4)
-$router->post('/pay/{code}/razorpay/create', 'Front\PaymentController@razorpayCreate');
+$router->any('/pay/{code}/razorpay/create', 'Front\PaymentController@razorpayCreate');
 $router->post('/pay/{code}/razorpay/callback', 'Front\PaymentController@razorpayCallback');
 $router->post('/webhook/razorpay', 'Front\PaymentController@razorpayWebhook');
 $router->any('/pay/{code}/upi', 'Front\PaymentController@upi');
