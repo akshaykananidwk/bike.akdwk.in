@@ -22,23 +22,27 @@ class View
             throw new \RuntimeException("View not found: {$template}");
         }
 
-        $vars = array_merge(self::$shared, $data);
-        extract($vars, EXTR_SKIP);
+        // Use collision-proof internal names — templates may define $data/$vars/etc.
+        $__viewData = array_merge(self::$shared, $data);
 
-        ob_start();
-        require $file;
-        $content = ob_get_clean();
+        // Render inside an isolated closure so template-scope variables never
+        // clobber this method's locals.
+        $__render = static function (string $__file, array $__scope): string {
+            extract($__scope, EXTR_SKIP);
+            ob_start();
+            require $__file;
+            return (string) ob_get_clean();
+        };
+
+        $content = $__render($file, $__viewData);
 
         if ($layout !== null) {
             $layoutFile = BASE_PATH . '/app/Views/layouts/' . $layout . '.php';
             if (!is_file($layoutFile)) {
                 throw new \RuntimeException("Layout not found: {$layout}");
             }
-            $vars['content'] = $content;
-            extract($vars, EXTR_SKIP);
-            ob_start();
-            require $layoutFile;
-            $content = ob_get_clean();
+            $__viewData['content'] = $content;
+            $content = $__render($layoutFile, $__viewData);
         }
         return $content;
     }
