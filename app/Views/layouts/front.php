@@ -17,6 +17,7 @@ $baseUrl   = rtrim(setting('site_url', '') ?: guess_base_url(), '/');
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
 <meta name="csrf-token" content="<?= e(csrf_token()) ?>">
+<script>window.CSRF=<?= json_encode(csrf_token()) ?>;</script>
 <meta name="theme-color" content="<?= e($primary) ?>">
 <title><?= e($title ?? ($siteName . ' — Bike, Scooty & Car Rental in Dwarka')) ?></title>
 <meta name="description" content="<?= e($desc) ?>">

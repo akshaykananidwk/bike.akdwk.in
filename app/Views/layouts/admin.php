@@ -28,6 +28,7 @@ $u = Auth::user();
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="<?= e(csrf_token()) ?>">
+<script>window.CSRF=<?= json_encode(csrf_token()) ?>;</script>
 <title><?= e($title ?? 'Admin') ?> — <?= e(setting('site_name', 'Dwarka Rental')) ?></title>
 <link href="<?= e(asset('css/bootstrap.min.css')) ?>" rel="stylesheet">
 <link href="<?= e(asset('css/bootstrap-icons.css')) ?>" rel="stylesheet">
