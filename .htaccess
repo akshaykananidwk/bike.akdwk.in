@@ -8,10 +8,6 @@ DirectoryIndex index.php index.html
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
-    # Required by mod_rewrite on many shared hosts. If your host rejects this
-    # with a 500 error, comment the next line out.
-    Options +FollowSymLinks
-
     # If deployed in a subfolder, adjust RewriteBase accordingly.
     # RewriteBase /
 
