@@ -1,0 +1,23 @@
+# Runtime / generated — never commit
+/config/config.php
+/config/.env
+/config/installed.lock
+
+# User-generated content
+/uploads/**
+!/uploads/.htaccess
+!/uploads/**/.gitignore
+
+# Backups, logs, cache
+/backups/**
+!/backups/.gitignore
+/logs/**
+!/logs/.gitignore
+/cache/**
+!/cache/.gitignore
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+/tmp/

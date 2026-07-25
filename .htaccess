@@ -1,0 +1,49 @@
+# Dwarka Rental — root .htaccess
+# Force HTTPS, pretty URLs -> front controller, security headers.
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # If deployed in a subfolder, adjust RewriteBase accordingly.
+    # RewriteBase /
+
+    # Force HTTPS (skip on localhost)
+    RewriteCond %{HTTPS} off
+    RewriteCond %{HTTP_HOST} !^localhost [NC]
+    RewriteCond %{HTTP_HOST} !^127\.0\.0\.1 [NC]
+    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Allow the installer to run directly.
+    RewriteRule ^install(/.*)?$ - [L]
+
+    # Serve existing files/dirs directly (assets, uploads, etc.)
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Everything else -> front controller
+    RewriteRule ^ index.php [L]
+</IfModule>
+
+# Disable directory listing
+Options -Indexes
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set X-XSS-Protection "1; mode=block"
+</IfModule>
+
+# Block access to sensitive dotfiles
+<FilesMatch "^\.(env|git|htaccess)">
+    Require all denied
+</FilesMatch>
+
+# PHP hardening (where allowed)
+<IfModule mod_php.c>
+    php_flag display_errors Off
+    php_value upload_max_filesize 6M
+    php_value post_max_size 8M
+</IfModule>
