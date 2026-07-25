@@ -29,8 +29,8 @@ $u = Auth::user();
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="<?= e(csrf_token()) ?>">
 <title><?= e($title ?? 'Admin') ?> — <?= e(setting('site_name', 'Dwarka Rental')) ?></title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="<?= e(asset('css/bootstrap.min.css')) ?>" rel="stylesheet">
+<link href="<?= e(asset('css/bootstrap-icons.css')) ?>" rel="stylesheet">
 <style>
  :root{--p:<?= e($primary) ?>;}
  body{font-family:system-ui,'Noto Sans Gujarati',sans-serif;background:#f1f5f9}
@@ -76,7 +76,7 @@ $u = Auth::user();
     <?= $content ?>
   </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= e(asset('js/bootstrap.bundle.min.js')) ?>"></script>
 <script>
 // Attach CSRF token to all fetch POSTs by default.
 window.CSRF = document.querySelector('meta[name=csrf-token]').content;

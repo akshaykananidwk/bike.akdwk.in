@@ -3,8 +3,8 @@
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Admin Login — <?= e(setting('site_name', 'Dwarka Rental')) ?></title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="<?= e(asset('css/bootstrap.min.css')) ?>" rel="stylesheet">
+<link href="<?= e(asset('css/bootstrap-icons.css')) ?>" rel="stylesheet">
 <style>body{font-family:system-ui,'Noto Sans Gujarati',sans-serif;background:linear-gradient(135deg,#0f172a,#1e3a8a);min-height:100vh;display:flex;align-items:center}
 .card{border:none;border-radius:16px;box-shadow:0 20px 50px rgba(0,0,0,.4)}</style>
 </head><body>

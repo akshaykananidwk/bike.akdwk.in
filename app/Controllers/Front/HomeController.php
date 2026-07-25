@@ -18,10 +18,12 @@ class HomeController extends Controller
         );
 
         return $this->view('front/home', [
-            'title'      => setting('site_name', 'Dwarka Rental') . ' — ' . __('tagline'),
-            'categories' => $categories,
-            'vehicles'   => $vehicles,
-            'gu'         => $gu,
+            'title'        => setting('site_name', 'Dwarka Rental') . ' — Bike, Scooty & Car Rental in Dwarka',
+            'categories'   => $categories,
+            'vehicles'     => $vehicles,
+            'vehicleCount' => count($vehicles),
+            'gu'           => $gu,
+            'splash'       => true, // 🙏 જય દ્વારકાધીશ welcome screen
         ], 'front');
     }
 }

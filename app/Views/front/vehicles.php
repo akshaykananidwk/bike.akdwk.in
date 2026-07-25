@@ -41,18 +41,23 @@
   <?php if (!$vehicles): ?><div class="col-12 text-center text-muted py-5">No vehicles match your filters.</div><?php endif; ?>
   <?php foreach ($vehicles as $v): $avail = $v['available_now'] ?? null; ?>
     <div class="col-6 col-lg-3">
-      <div class="card h-100 veh-card shadow-sm">
-        <div class="position-relative">
-          <img src="<?= $v['main_image'] ? e(upload_url($v['main_image'])) : 'https://placehold.co/400x300?text='.urlencode($v['name']) ?>" loading="lazy" alt="<?= e($v['name']) ?>">
+      <div class="veh-card h-100">
+        <div class="imgwrap d-flex align-items-center justify-content-center" style="background:linear-gradient(135deg,#eef2f8,#dbe4f0)">
+          <?php if ($v['main_image']): ?>
+            <img src="<?= e(upload_url($v['main_image'])) ?>" loading="lazy" alt="<?= e($v['name']) ?> on rent in Dwarka">
+          <?php else: ?>
+            <i class="bi bi-scooter" style="font-size:46px;color:#9db0c8"></i>
+          <?php endif; ?>
+          <span class="pill position-absolute top-0 start-0 m-2" style="background:rgba(0,0,0,.6);color:#fff"><?= e($v['category_name']) ?></span>
           <?php if ($avail !== null): ?>
-            <span class="badge bg-<?= $avail?'success':'danger' ?> position-absolute top-0 end-0 m-2"><?= $avail?e(__('available')):e(__('not_available')) ?></span>
+            <span class="pill position-absolute top-0 end-0 m-2" style="background:<?= $avail?'var(--s)':'#dc3545' ?>;color:#fff"><?= $avail?e(__('available')):e(__('not_available')) ?></span>
           <?php endif; ?>
         </div>
-        <div class="card-body p-2">
-          <div class="fw-semibold small"><?= e($gu && $v['name_gu'] ? $v['name_gu'] : $v['name']) ?></div>
-          <div class="text-muted" style="font-size:11px"><?= e($v['category_name']) ?> · <?= e(str_replace('_',' ',$v['transmission'])) ?></div>
-          <div class="text-primary fw-bold mt-1"><?= money($v['price_day']) ?><span class="fw-normal text-muted" style="font-size:11px">/<?= e(__('per_day')) ?></span></div>
-          <?php if ($v['price_hour']>0): ?><div class="text-muted" style="font-size:11px"><?= money($v['price_hour']) ?>/<?= e(__('per_hour')) ?></div><?php endif; ?>
+        <div class="p-2 p-md-3">
+          <div class="fw-semibold text-truncate"><?= e($gu && $v['name_gu'] ? $v['name_gu'] : $v['name']) ?></div>
+          <div class="text-muted" style="font-size:11px"><?= e(str_replace('_',' ',$v['transmission'])) ?> · <?= e($v['fuel']) ?></div>
+          <div class="mt-1"><span class="price-tag fs-5"><?= money($v['price_day']) ?></span><span class="text-muted small">/<?= e(__('per_day')) ?></span>
+            <?php if ($v['price_hour']>0): ?><span class="text-muted small ms-1">· <?= money($v['price_hour']) ?>/<?= e(__('per_hour')) ?></span><?php endif; ?></div>
           <a href="<?= e(base_url('/vehicle/'.$v['id'])) ?>" class="btn btn-primary btn-sm w-100 mt-2 tap"><?= e(__('book_now')) ?></a>
         </div>
       </div>

@@ -10,8 +10,8 @@ $primary = setting('primary_color', '#0d6efd');
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="csrf-token" content="<?= e(csrf_token()) ?>">
 <title><?= e($title ?? 'Panel') ?> — <?= e(setting('site_name','Dwarka Rental')) ?></title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="<?= e(asset('css/bootstrap.min.css')) ?>" rel="stylesheet">
+<link href="<?= e(asset('css/bootstrap-icons.css')) ?>" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
  :root{--p:<?= e($primary) ?>;}
@@ -47,7 +47,7 @@ $primary = setting('primary_color', '#0d6efd');
     <a href="<?= e(base_url($item['url'])) ?>" class="<?= !empty($item['active'])?'active':'' ?>"><i class="bi <?= e($item['icon']) ?>"></i><?= e($item['label']) ?></a>
   <?php endforeach; ?>
 </nav>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<?= e(asset('js/bootstrap.bundle.min.js')) ?>"></script>
 <script>window.CSRF=document.querySelector('meta[name=csrf-token]').content;</script>
 </body>
 </html>
