@@ -15,7 +15,10 @@ class Pricing
      *   total:float, advance:float, balance:float, gst_percent:float, advance_percent:float
      * }
      */
-    public static function quote(array $vehicle, string $pickup, string $drop, float $discount = 0.0): array
+    /**
+     * @param array $addons ['doorstep'=>bool, 'insurance'=>bool, 'credit'=>float]
+     */
+    public static function quote(array $vehicle, string $pickup, string $drop, float $discount = 0.0, array $addons = []): array
     {
         $start = strtotime($pickup);
         $end   = strtotime($drop);
@@ -53,13 +56,34 @@ class Pricing
             $base = $priceDay;
         }
 
+        $rawBase = $base;
         $base = max(0, $base - $discount);
 
         $gstPercent = (float)Settings::get('gst_percent', 0);
         $gst = round($base * $gstPercent / 100, 2);
 
+        // --- Optional add-ons -------------------------------------------------
+        // Doorstep delivery: free above a configurable order value.
+        $deliveryCharge = 0.0;
+        if (!empty($addons['doorstep']) && Settings::get('delivery_enabled', '1') === '1') {
+            $freeAbove = (float)Settings::get('delivery_free_above', 0);
+            $deliveryCharge = ($freeAbove > 0 && $base >= $freeAbove)
+                ? 0.0
+                : (float)Settings::get('delivery_charge', 0);
+        }
+        // Damage protection / insurance.
+        $insurance = 0.0;
+        if (!empty($addons['insurance']) && Settings::get('insurance_enabled', '1') === '1') {
+            $insurance = (float)Settings::get('insurance_amount', 0);
+        }
+
         $advancePercent = (float)Settings::get('advance_percent', 100);
-        $rentalWithTax = $base + $gst;
+        $rentalWithTax = $base + $gst + $deliveryCharge + $insurance;
+
+        // Customer referral/loyalty credit is applied last, never below zero.
+        $credit = min(max(0.0, (float)($addons['credit'] ?? 0)), $rentalWithTax);
+        $rentalWithTax = round($rentalWithTax - $credit, 2);
+
         // Deposit (refundable) is collected online along with the advance.
         $advance = round($rentalWithTax * $advancePercent / 100, 2) + $deposit;
         $total   = round($rentalWithTax + $deposit, 2);
@@ -69,10 +93,14 @@ class Pricing
             'hours'          => (float)$totalHours,
             'days'           => (int)ceil($totalHours / 24),
             'base'           => round($base, 2),
+            'raw_base'       => round($rawBase, 2),
             'gst'            => $gst,
             'gst_percent'    => $gstPercent,
             'deposit'        => round($deposit, 2),
             'discount'       => round($discount, 2),
+            'delivery'       => round($deliveryCharge, 2),
+            'insurance'      => round($insurance, 2),
+            'credit'         => round($credit, 2),
             'total'          => $total,
             'advance'        => round($advance, 2),
             'advance_percent'=> $advancePercent,

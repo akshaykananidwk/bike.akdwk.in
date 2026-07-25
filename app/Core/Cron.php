@@ -18,6 +18,8 @@ class Cron
             'auto_cancelled'  => self::autoCancelUnpaid(),
             'funds_released'  => \App\Services\WalletService::releaseHeld(),
             'review_requests' => \App\Services\ReviewService::requestPending(),
+            'abandoned_sent'  => self::abandonedBookingReminders(),
+            'doc_alerts'      => self::documentExpiryAlerts(),
             'update_check'    => self::dailyUpdateCheck(),
         ];
     }
@@ -123,6 +125,80 @@ class Cron
             Database::update('bookings', ['status' => 'cancelled'], ['id' => $b['id']]);
         }
         return count($stale);
+    }
+
+    /**
+     * Recover abandoned bookings: nudge customers who started a booking but
+     * never paid. Sent once per booking, before the auto-cancel window closes.
+     */
+    public static function abandonedBookingReminders(): int
+    {
+        $after  = max(1, (int)Settings::get('abandoned_reminder_minutes', 30));
+        // Only chase bookings that auto-cancel hasn't already killed.
+        $cancelAfter = max($after + 1, (int)Settings::get('auto_cancel_minutes', 20));
+
+        $rows = Database::fetchAll(
+            "SELECT b.*, v.name AS vehicle_name, p.name AS package_name
+             FROM {p}bookings b
+             LEFT JOIN {p}vehicles v ON v.id=b.vehicle_id
+             LEFT JOIN {p}packages p ON p.id=b.package_id
+             WHERE b.status='pending_payment' AND b.payment_status='unpaid'
+               AND b.abandoned_reminded_at IS NULL
+               AND b.customer_mobile IS NOT NULL
+               AND b.created_at < DATE_SUB(NOW(), INTERVAL {$after} MINUTE)
+             ORDER BY b.id DESC LIMIT 25"
+        );
+        foreach ($rows as $b) {
+            Whatsapp::notify('abandoned_booking', $b['customer_mobile'], [
+                'customer_name' => $b['customer_name'],
+                'booking_code'  => $b['code'],
+                'vehicle_name'  => $b['vehicle_name'] ?: ($b['package_name'] ?: 'your vehicle'),
+                'receipt_link'  => base_url('/checkout/' . $b['code']),
+            ]);
+            Database::update('bookings', ['abandoned_reminded_at' => now()], ['id' => $b['id']]);
+        }
+        return count($rows);
+    }
+
+    /**
+     * Warn the agency (and admin) when a vehicle's insurance / PUC / RC /
+     * fitness is about to expire. One alert per vehicle per day.
+     */
+    public static function documentExpiryAlerts(): int
+    {
+        $days = max(1, (int)Settings::get('doc_alert_days', 15));
+        $rows = Database::fetchAll(
+            "SELECT v.*, a.whatsapp AS agency_wa, a.mobile AS agency_mobile
+             FROM {p}vehicles v LEFT JOIN {p}agencies a ON a.id=v.agency_id
+             WHERE v.status='active'
+               AND (v.doc_alert_sent_at IS NULL OR v.doc_alert_sent_at < CURDATE())
+               AND (
+                    (v.insurance_expiry IS NOT NULL AND v.insurance_expiry <= DATE_ADD(CURDATE(), INTERVAL {$days} DAY))
+                 OR (v.puc_expiry       IS NOT NULL AND v.puc_expiry       <= DATE_ADD(CURDATE(), INTERVAL {$days} DAY))
+                 OR (v.rc_expiry        IS NOT NULL AND v.rc_expiry        <= DATE_ADD(CURDATE(), INTERVAL {$days} DAY))
+                 OR (v.fitness_expiry   IS NOT NULL AND v.fitness_expiry   <= DATE_ADD(CURDATE(), INTERVAL {$days} DAY))
+               )
+             LIMIT 25"
+        );
+        $adminWa = (string)Settings::get('contact_whatsapp', '');
+
+        foreach ($rows as $v) {
+            $due = [];
+            foreach (['insurance_expiry' => 'Insurance', 'puc_expiry' => 'PUC', 'rc_expiry' => 'RC', 'fitness_expiry' => 'Fitness'] as $col => $label) {
+                if (!empty($v[$col]) && strtotime($v[$col]) <= strtotime("+{$days} days")) {
+                    $due[] = $label . ' ' . date('d M Y', strtotime($v[$col]));
+                }
+            }
+            $summary = implode(', ', $due);
+            $vars = ['vehicle_name' => $v['name'] . ($v['reg_number'] ? ' (' . $v['reg_number'] . ')' : ''), 'balance' => $summary];
+
+            $to = $v['agency_wa'] ?: $v['agency_mobile'] ?: '';
+            if ($to) { Whatsapp::notify('doc_expiry_alert', $to, $vars); }
+            if ($adminWa) { Whatsapp::notify('doc_expiry_alert', $adminWa, $vars); }
+
+            Database::update('vehicles', ['doc_alert_sent_at' => date('Y-m-d')], ['id' => $v['id']]);
+        }
+        return count($rows);
     }
 
     /** Daily GitHub update check (Phase 8). */

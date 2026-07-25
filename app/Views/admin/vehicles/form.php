@@ -35,6 +35,14 @@ $errs = \App\Core\Session::flash('errors') ?? []; ?>
         <div class="col-6"><label class="form-label">Per Month</label><input name="price_month" type="number" step="0.01" class="form-control" value="<?= $val('price_month','0') ?>"></div>
         <div class="col-12"><label class="form-label">Security Deposit</label><input name="deposit" type="number" step="0.01" class="form-control" value="<?= $val('deposit','0') ?>"></div>
       </div></div>
+      <div class="card mt-3"><div class="card-header fw-bold">Documents <small class="text-muted">(expiry alerts)</small></div><div class="card-body row g-2">
+        <div class="col-6"><label class="form-label">Insurance</label><input type="date" name="insurance_expiry" class="form-control" value="<?= $val('insurance_expiry') ?>"></div>
+        <div class="col-6"><label class="form-label">PUC</label><input type="date" name="puc_expiry" class="form-control" value="<?= $val('puc_expiry') ?>"></div>
+        <div class="col-6"><label class="form-label">RC</label><input type="date" name="rc_expiry" class="form-control" value="<?= $val('rc_expiry') ?>"></div>
+        <div class="col-6"><label class="form-label">Fitness</label><input type="date" name="fitness_expiry" class="form-control" value="<?= $val('fitness_expiry') ?>"></div>
+        <div class="col-12"><small class="text-muted">WhatsApp alert is sent to the agency and admin before expiry.</small></div>
+      </div></div>
+
       <div class="card mt-3"><div class="card-header fw-bold">Commission &amp; Status</div><div class="card-body">
         <label class="form-label">Commission Type</label>
         <select name="commission_type" class="form-select mb-2"><?php foreach (['inherit'=>'Inherit','percent'=>'Percentage %','fixed'=>'Fixed ₹'] as $k=>$l): ?><option value="<?= $k ?>" <?= ($v['commission_type'] ?? 'inherit')===$k?'selected':'' ?>><?= $l ?></option><?php endforeach; ?></select>

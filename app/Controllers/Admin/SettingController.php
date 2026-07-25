@@ -18,6 +18,9 @@ class SettingController extends Controller
         'auto_cancel_minutes', 'attribution_days', 'min_withdrawal', 'otp_enabled',
         'shop_registration_enabled', 'agency_registration_enabled', 'registration_auto_approve', 'voice_greeting_enabled',
         'packages_enabled', 'reviews_enabled', 'reviews_auto_approve', 'google_review_url',
+        'delivery_enabled', 'delivery_charge', 'delivery_free_above', 'insurance_enabled', 'insurance_amount',
+        'agreement_enabled', 'referral_enabled', 'referral_reward_referrer', 'referral_reward_referred',
+        'loyalty_enabled', 'loyalty_points_per_100', 'loyalty_point_value', 'abandoned_reminder_minutes', 'doc_alert_days',
         'commission_type', 'commission_value', 'commission_on_base_only',
         'primary_color', 'secondary_color', 'contact_mobile', 'contact_whatsapp',
         'contact_email', 'map_link', 'maintenance_mode',
@@ -37,7 +40,7 @@ class SettingController extends Controller
                 // Checkboxes: absent means 0
                 if (in_array($k, ['commission_on_base_only','maintenance_mode','otp_enabled','payments_to_platform',
                     'shop_registration_enabled','agency_registration_enabled','registration_auto_approve','voice_greeting_enabled',
-                    'packages_enabled','reviews_enabled','reviews_auto_approve','razorpay_enabled','upi_enabled','cash_enabled','phonepe_enabled','cashfree_enabled'], true)) {
+                    'packages_enabled','reviews_enabled','reviews_auto_approve','delivery_enabled','insurance_enabled','agreement_enabled','referral_enabled','loyalty_enabled','razorpay_enabled','upi_enabled','cash_enabled','phonepe_enabled','cashfree_enabled'], true)) {
                     $v = Request::post($k) ? '1' : '0';
                 }
                 Settings::set($k, $v);

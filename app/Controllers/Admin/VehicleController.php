@@ -74,6 +74,10 @@ class VehicleController extends Controller
             'description'      => Request::post('description') ?: null,
             'status'           => Request::post('status', 'active'),
             'sort_order'       => (int)Request::post('sort_order', 0),
+            'insurance_expiry' => Request::post('insurance_expiry') ?: null,
+            'puc_expiry'       => Request::post('puc_expiry') ?: null,
+            'rc_expiry'        => Request::post('rc_expiry') ?: null,
+            'fitness_expiry'   => Request::post('fitness_expiry') ?: null,
         ];
 
         // Main image

@@ -41,6 +41,28 @@
         <input name="google_review_url" class="form-control" value="<?= $g('google_review_url') ?>" placeholder="https://g.page/r/..../review"></div>
     </div></div></div>
 
+
+    <div class="col-lg-6"><div class="card"><div class="card-header fw-bold">Add-ons, Referral &amp; Loyalty</div><div class="card-body row g-2">
+      <div class="col-12"><div class="form-check form-switch"><input type="checkbox" name="delivery_enabled" value="1" class="form-check-input" id="delen" <?= (!array_key_exists('delivery_enabled',$s) || $chk('delivery_enabled')) ? 'checked' : '' ?>><label class="form-check-label" for="delen"><strong>Doorstep delivery</strong> — deliver the vehicle to the customer's hotel</label></div></div>
+      <div class="col-6"><label class="form-label">Delivery charge ₹</label><input name="delivery_charge" type="number" step="0.01" class="form-control" value="<?= $g('delivery_charge','150') ?>"></div>
+      <div class="col-6"><label class="form-label">Free above ₹</label><input name="delivery_free_above" type="number" step="0.01" class="form-control" value="<?= $g('delivery_free_above','0') ?>"></div>
+
+      <div class="col-12 mt-2"><div class="form-check form-switch"><input type="checkbox" name="insurance_enabled" value="1" class="form-check-input" id="insen" <?= (!array_key_exists('insurance_enabled',$s) || $chk('insurance_enabled')) ? 'checked' : '' ?>><label class="form-check-label" for="insen"><strong>Damage protection add-on</strong></label></div></div>
+      <div class="col-6"><label class="form-label">Protection price ₹</label><input name="insurance_amount" type="number" step="0.01" class="form-control" value="<?= $g('insurance_amount','99') ?>"></div>
+      <div class="col-6 d-flex align-items-end"><div class="form-check form-switch mb-2"><input type="checkbox" name="agreement_enabled" value="1" class="form-check-input" id="agren" <?= (!array_key_exists('agreement_enabled',$s) || $chk('agreement_enabled')) ? 'checked' : '' ?>><label class="form-check-label" for="agren">Digital rental agreement</label></div></div>
+
+      <div class="col-12 mt-2"><div class="form-check form-switch"><input type="checkbox" name="referral_enabled" value="1" class="form-check-input" id="refen" <?= (!array_key_exists('referral_enabled',$s) || $chk('referral_enabled')) ? 'checked' : '' ?>><label class="form-check-label" for="refen"><strong>Customer referral programme</strong></label></div></div>
+      <div class="col-6"><label class="form-label">Referrer reward ₹</label><input name="referral_reward_referrer" type="number" step="0.01" class="form-control" value="<?= $g('referral_reward_referrer','100') ?>"></div>
+      <div class="col-6"><label class="form-label">Friend reward ₹</label><input name="referral_reward_referred" type="number" step="0.01" class="form-control" value="<?= $g('referral_reward_referred','100') ?>"></div>
+
+      <div class="col-12 mt-2"><div class="form-check form-switch"><input type="checkbox" name="loyalty_enabled" value="1" class="form-check-input" id="loyen" <?= (!array_key_exists('loyalty_enabled',$s) || $chk('loyalty_enabled')) ? 'checked' : '' ?>><label class="form-check-label" for="loyen"><strong>Loyalty points</strong></label></div></div>
+      <div class="col-6"><label class="form-label">Points per ₹100</label><input name="loyalty_points_per_100" type="number" class="form-control" value="<?= $g('loyalty_points_per_100','5') ?>"></div>
+      <div class="col-6"><label class="form-label">₹ value per point</label><input name="loyalty_point_value" type="number" step="0.01" class="form-control" value="<?= $g('loyalty_point_value','1') ?>"></div>
+
+      <div class="col-6 mt-2"><label class="form-label">Abandoned reminder (min)</label><input name="abandoned_reminder_minutes" type="number" class="form-control" value="<?= $g('abandoned_reminder_minutes','30') ?>"></div>
+      <div class="col-6 mt-2"><label class="form-label">Doc expiry alert (days)</label><input name="doc_alert_days" type="number" class="form-control" value="<?= $g('doc_alert_days','15') ?>"></div>
+    </div></div></div>
+
     <div class="col-lg-6"><div class="card"><div class="card-header fw-bold">Payment Routing &amp; Settlement</div><div class="card-body">
       <div class="form-check form-switch mb-2"><input type="checkbox" name="payments_to_platform" value="1" class="form-check-input" id="p2p" <?= (!array_key_exists('payments_to_platform',$s) || $chk('payments_to_platform')) ? 'checked' : '' ?>><label class="form-check-label" for="p2p"><strong>All payments to my (admin) account first</strong> — agencies are settled from their wallet after the hold period.</label></div>
       <div class="row g-2">

@@ -42,6 +42,31 @@ $vname = $vehicle['name'];
         <button type="button" class="btn btn-outline-primary" id="couponBtn">Apply</button>
       </div>
       <div id="couponMsg" class="small mt-1"></div>
+
+      <!-- Optional add-ons -->
+      <div class="mt-3">
+        <?php if (setting('delivery_enabled','1') === '1'): ?>
+          <div class="form-check">
+            <input class="form-check-input addon" type="checkbox" name="doorstep" value="1" id="doorstep">
+            <label class="form-check-label" for="doorstep">
+              <strong>Deliver to my hotel</strong>
+              <span class="text-muted small">(+<?= money(setting('delivery_charge', 0)) ?><?php if ((float)setting('delivery_free_above',0) > 0): ?>, free above <?= money(setting('delivery_free_above')) ?><?php endif; ?>)</span>
+            </label>
+          </div>
+          <div class="mt-1 d-none" id="deliveryAddrWrap">
+            <input name="delivery_address" class="form-control form-control-sm" placeholder="Hotel name / address in Dwarka">
+          </div>
+        <?php endif; ?>
+        <?php if (setting('insurance_enabled','1') === '1'): ?>
+          <div class="form-check mt-1">
+            <input class="form-check-input addon" type="checkbox" name="insurance" value="1" id="insurance">
+            <label class="form-check-label" for="insurance">
+              <strong>Damage protection</strong>
+              <span class="text-muted small">(+<?= money(setting('insurance_amount', 0)) ?> — covers minor damage, no deposit disputes)</span>
+            </label>
+          </div>
+        <?php endif; ?>
+      </div>
     </div></div>
   </section>
 
@@ -69,6 +94,24 @@ $vname = $vehicle['name'];
       <div class="col-12"><label class="form-label"><?= e(__('address')) ?></label><input name="customer_address" class="form-control"></div>
       <div class="col-md-6"><label class="form-label"><?= e(__('dl_photo')) ?> *</label><input type="file" name="dl_image" accept="image/*,application/pdf" class="form-control" required></div>
       <div class="col-md-6"><label class="form-label"><?= e(__('id_photo')) ?></label><input type="file" name="id_image" accept="image/*,application/pdf" class="form-control"></div>
+      <?php if (setting('referral_enabled','1') === '1'): ?>
+      <div class="col-md-6"><label class="form-label">Referral code <span class="text-muted small">(optional)</span></label>
+        <input name="referral_code" class="form-control text-uppercase" placeholder="Friend's code — you both get credit"></div>
+      <?php endif; ?>
+      <?php if (setting('agreement_enabled','1') === '1'): ?>
+      <div class="col-12">
+        <div class="card bg-light border-0"><div class="card-body py-2">
+          <div class="fw-bold small mb-1">Rental agreement</div>
+          <div class="text-muted" style="font-size:12px">
+            I confirm I hold a valid driving licence, will return the vehicle on time and in the same condition,
+            and accept liability for damage, traffic fines and fuel as per the
+            <a href="<?= e(base_url('/page/terms')) ?>" target="_blank">rental terms</a>.
+          </div>
+          <label class="form-label small mt-2 mb-1">Type your full name to sign *</label>
+          <input name="agreement_name" class="form-control form-control-sm" placeholder="Your full name as digital signature" required>
+        </div></div>
+      </div>
+      <?php endif; ?>
       <div class="col-12"><div class="form-check"><input type="checkbox" name="terms" value="1" class="form-check-input" id="terms" required><label class="form-check-label" for="terms"><?= e(__('accept_terms')) ?> (<a href="<?= e(base_url('/page/terms')) ?>" target="_blank">Terms</a>)</label></div></div>
     </div></div>
   </section>
@@ -127,7 +170,9 @@ $vname = $vehicle['name'];
     if(!pickup||!drop){ msg.innerHTML='<span class="text-danger">Select pickup & drop time.</span>'; return false; }
     msg.innerHTML='<?= e(__('loading')) ?>';
     try{
-      const r=await post('<?= e(base_url('/book/')) ?>'+VID+'/availability',{pickup,drop});
+      const r=await post('<?= e(base_url('/book/')) ?>'+VID+'/availability',{pickup,drop,
+        doorstep: document.getElementById('doorstep') && document.getElementById('doorstep').checked ? 1 : '',
+        insurance: document.getElementById('insurance') && document.getElementById('insurance').checked ? 1 : ''});
       if(!r.ok){ msg.innerHTML='<span class="text-danger">'+r.error+'</span>'; return false; }
       availabilityOk=r.available;
       if(!r.available){ msg.innerHTML='<span class="text-danger"><i class="bi bi-x-circle"></i> Not available for this time.</span>'; qb.innerHTML=''; return false; }
@@ -164,6 +209,16 @@ $vname = $vehicle['name'];
       '<tr class="fw-bold"><td>Pay now</td><td class="text-end"><?= e(setting('currency_symbol','₹')) ?>'+(q.advance||0)+'</td></tr>'+
       '</table>';
   }
+
+  // Add-ons: reveal the address field and refresh the price when toggled.
+  document.querySelectorAll('.addon').forEach(function(cb){
+    cb.addEventListener('change', function(){
+      var w=document.getElementById('deliveryAddrWrap');
+      var d=document.getElementById('doorstep');
+      if(w && d) w.classList.toggle('d-none', !d.checked);
+      if(step===2) checkAvail();
+    });
+  });
 
   // Coupon
   document.getElementById('couponBtn').onclick=async function(){

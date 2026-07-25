@@ -50,6 +50,10 @@ class BookingService
             try { \App\Services\CommissionEngine::apply($bookingId); } catch (\Throwable $e) { log_line('app.log', 'commission: ' . $e->getMessage()); }
         }
 
+        // Referral payout + loyalty points for the customer.
+        try { \App\Services\ReferralService::rewardForBooking($bookingId); }
+        catch (\Throwable $e) { log_line('app.log', 'referral: ' . $e->getMessage()); }
+
         self::sendConfirmationMessages($booking);
     }
 

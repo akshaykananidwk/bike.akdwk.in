@@ -56,7 +56,7 @@ class BookingController extends Controller
         }
 
         $units = Availability::availableUnits((int)$vehicle['id'], $pickup, $drop);
-        $quote = Pricing::quote($vehicle, $pickup, $drop);
+        $quote = Pricing::quote($vehicle, $pickup, $drop, 0.0, $this->addonsFromRequest());
         return $this->json([
             'ok'        => true,
             'available' => $units > 0,
@@ -88,7 +88,7 @@ class BookingController extends Controller
         $quote = Pricing::quote($vehicle, $pickup, $drop);
         $res = \App\Services\CouponService::validate((string)Request::post('code'), $quote['base']);
         if (!$res['ok']) { return $this->json(['ok' => false, 'error' => $res['error']]); }
-        $newQuote = Pricing::quote($vehicle, $pickup, $drop, $res['discount']);
+        $newQuote = Pricing::quote($vehicle, $pickup, $drop, $res['discount'], $this->addonsFromRequest());
         return $this->json([
             'ok' => true, 'discount' => $res['discount'], 'quote' => $newQuote,
             'quote_html' => $this->quoteHtml($newQuote),
@@ -152,8 +152,13 @@ class BookingController extends Controller
             if ($cr['ok']) { $discount = $cr['discount']; $couponId = (int)$cr['coupon']['id']; }
         }
 
+        // Add-ons + customer credit (referral/loyalty).
+        $addons = $this->addonsFromRequest();
+        $customerCredit = \App\Services\ReferralService::creditBalance($mobile);
+        $addons['credit'] = $customerCredit;
+
         // Pricing.
-        $quote = Pricing::quote($vehicle, $pickup, $drop, $discount);
+        $quote = Pricing::quote($vehicle, $pickup, $drop, $discount, $addons);
 
         // Shop attribution: session first, then cookie, else direct.
         [$shopId, $source] = $this->resolveShop();
@@ -176,6 +181,15 @@ class BookingController extends Controller
             'tax_amount'          => $quote['gst'],
             'discount_amount'     => $quote['discount'],
             'coupon_id'           => $couponId,
+            'delivery_type'       => !empty($addons['doorstep']) ? 'doorstep' : 'pickup',
+            'delivery_address'    => !empty($addons['doorstep']) ? (Request::post('delivery_address') ?: null) : null,
+            'delivery_charge'     => $quote['delivery'],
+            'insurance_opted'     => !empty($addons['insurance']) ? 1 : 0,
+            'insurance_amount'    => $quote['insurance'],
+            'credit_used'         => $quote['credit'],
+            'agreement_signed_at' => Request::post('agreement_name') ? now() : null,
+            'agreement_name'      => Request::post('agreement_name') ?: null,
+            'agreement_ip'        => Request::post('agreement_name') ? Request::ip() : null,
             'extra_charges'       => 0,
             'total_amount'        => $quote['total'],
             'advance_amount'      => $quote['advance'],
@@ -195,6 +209,8 @@ class BookingController extends Controller
         ]);
 
         if ($couponId) { \App\Services\CouponService::redeem($couponId); }
+        if ($quote['credit'] > 0) { \App\Services\ReferralService::consumeCredit($mobile, $quote['credit'], $bookingId); }
+        \App\Services\ReferralService::attachReferral($mobile, (string)Request::post('referral_code'), $bookingId);
 
         Session::set('booking_' . $code, $bookingId);
         Session::forget('otp_verified_mobile');
@@ -269,15 +285,35 @@ class BookingController extends Controller
                 [$mobile]
             );
         }
+        $referral = null;
+        if ($mobile && setting('referral_enabled', '1') === '1') {
+            $referral = [
+                'code'   => \App\Services\ReferralService::codeFor($mobile),
+                'credit' => \App\Services\ReferralService::creditBalance($mobile),
+                'points' => (int)Database::scalar("SELECT loyalty_points FROM {p}customers WHERE mobile=?", [$mobile]),
+                'reward' => (float)setting('referral_reward_referred', 100),
+            ];
+        }
+
         return $this->view('front/my_bookings', [
             'title'    => 'My Bookings',
             'bookings' => $bookings,
             'mobile'   => $mobile,
+            'referral' => $referral,
             'gu'       => Lang::isGujarati(),
         ], 'front');
     }
 
     // -- helpers ------------------------------------------------------------
+
+    /** Read optional add-on selections from the request. */
+    private function addonsFromRequest(): array
+    {
+        return [
+            'doorstep'  => (bool)Request::input('doorstep'),
+            'insurance' => (bool)Request::input('insurance'),
+        ];
+    }
 
     private function loadBooking(string $code): ?array
     {
@@ -324,7 +360,11 @@ class BookingController extends Controller
         $rows = [
             ['Base rental (' . $q['days'] . ' day' . ($q['days'] > 1 ? 's' : '') . ')', money($q['base'])],
         ];
+        if (($q['discount'] ?? 0) > 0) { $rows[] = ['Discount', '-' . money($q['discount'])]; }
         if ($q['gst'] > 0) { $rows[] = ['GST (' . $q['gst_percent'] . '%)', money($q['gst'])]; }
+        if (($q['delivery'] ?? 0) > 0) { $rows[] = ['Doorstep delivery', money($q['delivery'])]; }
+        if (($q['insurance'] ?? 0) > 0) { $rows[] = ['Damage protection', money($q['insurance'])]; }
+        if (($q['credit'] ?? 0) > 0) { $rows[] = ['Referral credit', '-' . money($q['credit'])]; }
         $rows[] = ['Security deposit (refundable)', money($q['deposit'])];
         $html = '<table class="table table-sm mb-0">';
         foreach ($rows as [$l, $v]) { $html .= "<tr><td>{$l}</td><td class='text-end'>{$v}</td></tr>"; }
