@@ -23,6 +23,11 @@ class SeoController extends Controller
         foreach (\App\Controllers\Front\SeoLandingController::slugs() as $slug) {
             $urls[] = base_url('/rent/' . $slug);
         }
+        // Tour packages
+        $urls[] = base_url('/packages');
+        foreach (Database::fetchAll("SELECT slug FROM {p}packages WHERE status='active'") as $pk) {
+            $urls[] = base_url('/package/' . $pk['slug']);
+        }
         $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
         foreach ($urls as $u) {

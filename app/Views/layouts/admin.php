@@ -9,6 +9,7 @@ $menu = [
     'agencies'  => ['/admin/agencies', 'Agencies', 'bi-people'],
     'categories'=> ['/admin/categories', 'Categories', 'bi-tags'],
     'vehicles'  => ['/admin/vehicles', 'Vehicles', 'bi-scooter'],
+    'packages'  => ['/admin/packages', 'Packages', 'bi-map'],
     'bookings'  => ['/admin/bookings', 'Bookings', 'bi-calendar-check'],
     'payments'  => ['/admin/payments', 'Payments', 'bi-cash-stack'],
     'payouts'   => ['/admin/payouts', 'Payouts', 'bi-wallet2'],

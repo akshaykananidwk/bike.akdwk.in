@@ -102,6 +102,34 @@ $siteName = setting('site_name', 'Dwarka Rental');
     </div>
   </section>
 
+  <!-- DARSHAN PACKAGES -->
+  <?php if (!empty($packages)): ?>
+  <section class="py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="section-title mb-0">Dwarka Darshan &amp; Taxi Packages</h2>
+      <a href="<?= e(base_url('/packages')) ?>" class="btn btn-sm btn-outline-primary">View all <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="row g-3">
+      <?php foreach ($packages as $p): ?>
+        <div class="col-12 col-md-6 col-lg-4">
+          <a href="<?= e(base_url('/package/' . $p['slug'])) ?>" class="card border-0 shadow-soft h-100 text-decoration-none" style="border-radius:16px;color:inherit">
+            <div class="card-body">
+              <span class="pill" style="background:var(--p);color:#fff"><?= e(ucfirst($p['type'])) ?></span>
+              <div class="fw-bold mt-2"><?= e($p['name']) ?></div>
+              <div class="text-muted small"><?= e($p['short_desc']) ?></div>
+              <div class="d-flex align-items-baseline gap-2 mt-2">
+                <span class="price-tag fs-5"><?= money($p['price']) ?></span>
+                <?php if ($p['strike_price'] > 0): ?><span class="text-muted text-decoration-line-through small"><?= money($p['strike_price']) ?></span><?php endif; ?>
+                <?php if ($p['duration_text']): ?><span class="text-muted small ms-auto"><i class="bi bi-clock"></i> <?= e($p['duration_text']) ?></span><?php endif; ?>
+              </div>
+            </div>
+          </a>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  </section>
+  <?php endif; ?>
+
   <!-- WHY CHOOSE US -->
   <section class="py-4">
     <h2 class="section-title mb-3 text-center">Why book with <?= e($siteName) ?>?</h2>

@@ -143,6 +143,7 @@ $baseUrl   = rtrim(setting('site_url', '') ?: guess_base_url(), '/');
 <nav class="bottombar">
   <a href="<?= e(base_url('/')) ?>"><i class="bi bi-house-door"></i>Home</a>
   <a href="<?= e(base_url('/vehicles')) ?>"><i class="bi bi-scooter"></i>Vehicles</a>
+  <a href="<?= e(base_url('/packages')) ?>"><i class="bi bi-map"></i>Packages</a>
   <?php if ($wa = setting('contact_whatsapp')): ?><a href="https://wa.me/91<?= e($wa) ?>" target="_blank"><i class="bi bi-whatsapp"></i>Chat</a><?php endif; ?>
   <?php if ($m = setting('contact_mobile')): ?><a href="tel:<?= e($m) ?>"><i class="bi bi-telephone"></i>Call</a><?php endif; ?>
   <a href="<?= e(base_url('/my-bookings')) ?>"><i class="bi bi-bag-check"></i>Bookings</a>

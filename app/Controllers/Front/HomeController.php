@@ -17,10 +17,15 @@ class HomeController extends Controller
              WHERE v.status='active' ORDER BY v.sort_order, v.id DESC LIMIT 8"
         );
 
+        $packages = setting('packages_enabled', '1') === '1'
+            ? Database::fetchAll("SELECT * FROM {p}packages WHERE status='active' ORDER BY sort_order, id LIMIT 3")
+            : [];
+
         return $this->view('front/home', [
-            'title'        => setting('site_name', 'Dwarka Rental') . ' — Bike, Scooty & Car Rental in Dwarka',
+            'title'        => setting('site_name', 'Dwarka Rental') . ' — Bike, Car, Taxi & Tempo Rental in Dwarka',
             'categories'   => $categories,
             'vehicles'     => $vehicles,
+            'packages'     => $packages,
             'vehicleCount' => count($vehicles),
             'gu'           => $gu,
             'splash'       => true, // 🙏 જય દ્વારકાધીશ welcome screen

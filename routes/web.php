@@ -18,6 +18,9 @@ $router->get('/s/{code}', 'Front\ReferralController@scan');           // QR scan
 $router->get('/vehicles', 'Front\VehicleController@index');
 $router->get('/vehicle/{id}', 'Front\VehicleController@show');
 $router->get('/rent/{slug}', 'Front\SeoLandingController@show');   // SEO location pages
+$router->get('/packages', 'Front\PackageController@index');
+$router->get('/package/{slug}', 'Front\PackageController@show');
+$router->post('/package/{slug}/book', 'Front\PackageController@book');
 $router->get('/page/{slug}', 'Front\PageController@show');
 
 // Booking wizard + OTP + payment (Phase 3/4)
@@ -68,6 +71,12 @@ $router->group(['prefix' => '/admin', 'middleware' => ['AdminAuth']], function (
     $r->any('/agencies/create', 'Admin\AgencyController@create');
     $r->any('/agencies/{id}/edit', 'Admin\AgencyController@edit');
     $r->post('/agencies/{id}/delete', 'Admin\AgencyController@delete');
+
+    // Packages
+    $r->get('/packages', 'Admin\PackageController@index');
+    $r->any('/packages/create', 'Admin\PackageController@create');
+    $r->any('/packages/{id}/edit', 'Admin\PackageController@edit');
+    $r->post('/packages/{id}/delete', 'Admin\PackageController@delete');
 
     // Categories & Vehicles
     $r->any('/categories', 'Admin\CategoryController@index');
