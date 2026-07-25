@@ -17,6 +17,7 @@ $router->get('/', 'Front\HomeController@index');
 $router->get('/s/{code}', 'Front\ReferralController@scan');           // QR scan attribution
 $router->get('/vehicles', 'Front\VehicleController@index');
 $router->get('/vehicle/{id}', 'Front\VehicleController@show');
+$router->get('/rent/{slug}', 'Front\SeoLandingController@show');   // SEO location pages
 $router->get('/page/{slug}', 'Front\PageController@show');
 
 // Booking wizard + OTP + payment (Phase 3/4)
@@ -44,6 +45,8 @@ $router->post('/api/whatsapp_inbound', 'Api\WhatsappController@inbound');
 // --- Admin panel (Phase 2+) -----------------------------------------------
 $router->any('/admin/login', 'Admin\AuthController@login');
 $router->get('/admin/logout', 'Admin\AuthController@logout');
+// Return to admin from an impersonated (login-as) session — not behind AdminAuth.
+$router->get('/admin/return', 'Admin\AuthController@returnToAdmin');
 $router->group(['prefix' => '/admin', 'middleware' => ['AdminAuth']], function ($r) {
     $r->get('/', 'Admin\DashboardController@index');
     $r->get('/dashboard', 'Admin\DashboardController@index');
@@ -54,6 +57,8 @@ $router->group(['prefix' => '/admin', 'middleware' => ['AdminAuth']], function (
     $r->any('/shops/{id}/edit', 'Admin\ShopController@edit');
     $r->post('/shops/{id}/delete', 'Admin\ShopController@delete');
     $r->any('/shops/import', 'Admin\ShopController@import');
+    $r->get('/shops/{id}/login-as', 'Admin\AuthController@loginAsShop');
+    $r->get('/agencies/{id}/login-as', 'Admin\AuthController@loginAsAgency');
     $r->get('/shops/{id}/qr', 'Admin\ShopController@qr');
     $r->get('/shops/{id}/poster', 'Admin\ShopController@poster');
     $r->get('/shops/posters/bulk', 'Admin\ShopController@bulkPosters');

@@ -55,7 +55,10 @@ class CommissionEngine
         $platformNet = round($agencyCommission - $shopCommission, 2);
         $agencyPayable = round($base - $agencyCommission, 2);
 
-        Database::transaction(function () use ($bookingId, $shop, $agency, $base, $rateType, $rateValue, $shopCommission, $platformNet, $agencyPayable, $agType, $agValue) {
+        // Funds are held for the settlement period (default 48h) before payout.
+        $holdHours = (int)Settings::get('settlement_hold_hours', 48);
+
+        Database::transaction(function () use ($bookingId, $shop, $agency, $base, $rateType, $rateValue, $shopCommission, $platformNet, $agencyPayable, $agType, $agValue, $holdHours) {
             // Shop commission
             if ($shop && $shopCommission > 0) {
                 Database::insert('commission_ledger', [
@@ -63,7 +66,7 @@ class CommissionEngine
                     'entry_type' => 'credit', 'base_amount' => $base, 'rate_type' => $rateType,
                     'rate_value' => $rateValue, 'amount' => $shopCommission, 'note' => 'Referral commission',
                 ]);
-                WalletService::credit('shop', (int)$shop['id'], $shopCommission, 'commission', $bookingId, 'Booking commission');
+                WalletService::credit('shop', (int)$shop['id'], $shopCommission, 'commission', $bookingId, 'Booking commission', $holdHours);
             }
             // Platform (informational; the house has no wallet)
             Database::insert('commission_ledger', [
@@ -79,7 +82,7 @@ class CommissionEngine
                     'amount' => $agencyPayable, 'note' => 'Agency settlement',
                 ]);
                 if ($agencyPayable > 0) {
-                    WalletService::credit('agency', (int)$agency['id'], $agencyPayable, 'settlement', $bookingId, 'Booking settlement');
+                    WalletService::credit('agency', (int)$agency['id'], $agencyPayable, 'settlement', $bookingId, 'Booking settlement', $holdHours);
                 }
             }
         });

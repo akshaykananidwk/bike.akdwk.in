@@ -97,6 +97,43 @@ class Auth
         Session::regenerate();
     }
 
+    // ---- impersonation (admin "login as") ---------------------------------
+
+    /** Super admin logs in as another user, remembering who to return to. */
+    public static function impersonate(int $userId): bool
+    {
+        if (!self::is('super_admin')) {
+            return false;
+        }
+        $target = Database::fetch("SELECT * FROM {p}users WHERE id=? AND status='active'", [$userId]);
+        if (!$target) {
+            return false;
+        }
+        $adminId = self::id();
+        self::login($target);              // regenerates id but keeps session data
+        $_SESSION['_impersonator'] = $adminId;
+        return true;
+    }
+
+    public static function isImpersonating(): bool
+    {
+        return !empty($_SESSION['_impersonator']);
+    }
+
+    /** Return to the original admin account. */
+    public static function stopImpersonating(): void
+    {
+        if (empty($_SESSION['_impersonator'])) {
+            return;
+        }
+        $adminId = (int)$_SESSION['_impersonator'];
+        unset($_SESSION['_impersonator']);
+        $admin = Database::fetch("SELECT * FROM {p}users WHERE id=? AND status='active'", [$adminId]);
+        if ($admin) {
+            self::login($admin);
+        }
+    }
+
     /** Require authentication + optional role list; redirect if unmet. */
     public static function require(string $loginUrl, string ...$roles): void
     {

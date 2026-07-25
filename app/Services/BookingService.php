@@ -39,8 +39,11 @@ class BookingService
             return;
         }
 
-        Database::update('bookings', ['status' => 'confirmed'], ['id' => $bookingId]);
+        // Generate a pickup handover OTP (customer shows it, agency enters it).
+        $pickupOtp = (string)random_int(100000, 999999);
+        Database::update('bookings', ['status' => 'confirmed', 'pickup_otp' => $pickupOtp], ['id' => $bookingId]);
         $booking['status'] = 'confirmed';
+        $booking['pickup_otp'] = $pickupOtp;
 
         // Commission + wallet credit (Phase 5). Guarded so earlier phases work.
         if (class_exists(\App\Services\CommissionEngine::class)) {

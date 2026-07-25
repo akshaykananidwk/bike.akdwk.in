@@ -18,6 +18,7 @@
         <form method="post" action="<?= e(base_url('/agency/bookings/'.$b['id'].'/pickup')) ?>" enctype="multipart/form-data"><?= csrf_field() ?>
           <div class="modal-header"><h6 class="modal-title">Pickup — <?= e($b['code']) ?></h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
           <div class="modal-body text-start">
+            <div class="mb-2"><label class="form-label small text-danger fw-bold">Pickup OTP (ask the customer)</label><input name="pickup_otp" class="form-control form-control-lg text-center" maxlength="6" inputmode="numeric" placeholder="6-digit OTP" required><small class="text-muted">The customer sees this OTP on their booking screen. Enter it to confirm handover.</small></div>
             <div class="mb-2"><label class="form-label small">Odometer</label><input name="odo" class="form-control"></div>
             <div class="mb-2"><label class="form-label small">Fuel level</label><input name="fuel" class="form-control" placeholder="e.g. Full / Half"></div>
             <div class="mb-2"><label class="form-label small">Photo</label><input type="file" name="photo" class="form-control" accept="image/*"></div>

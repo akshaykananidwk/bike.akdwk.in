@@ -102,9 +102,19 @@ class PaymentController extends Controller
         if ($booking['status'] !== 'pending_payment') { return $this->redirect('/booking/' . $booking['code'] . '/success'); }
 
         $agency = $booking['agency_id'] ? Database::fetch("SELECT * FROM {p}agencies WHERE id=?", [$booking['agency_id']]) : null;
-        $upiId = $agency['upi_id'] ?? setting('platform_upi_id', '');
-        $qrImage = $agency['upi_qr_image'] ?? null;
-        $payee = $agency['name'] ?? setting('site_name', 'Dwarka Rental');
+        // All payments route to the platform (admin) account; the agency is settled
+        // from the wallet after the hold period. Fall back to agency UPI only if
+        // the platform hasn't set a UPI and payments_to_platform is off.
+        $toPlatform = setting('payments_to_platform', '1') === '1';
+        if ($toPlatform) {
+            $upiId   = (string)setting('platform_upi_id', '');
+            $qrImage = setting('platform_upi_qr') ?: null;
+            $payee   = setting('platform_payee_name') ?: setting('site_name', 'Dwarka Rental');
+        } else {
+            $upiId   = $agency['upi_id'] ?? setting('platform_upi_id', '');
+            $qrImage = $agency['upi_qr_image'] ?? null;
+            $payee   = $agency['name'] ?? setting('site_name', 'Dwarka Rental');
+        }
         $amount = (float)$booking['advance_amount'];
         $deepLink = $upiId ? 'upi://pay?pa=' . rawurlencode($upiId) . '&pn=' . rawurlencode($payee) . '&am=' . $amount . '&cu=INR&tn=' . rawurlencode($booking['code']) : '';
 

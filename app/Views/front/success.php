@@ -20,6 +20,16 @@ $map = setting('map_link', '');
   <div class="badge bg-dark fs-6 mt-2"><?= e($booking['code']) ?></div>
 </div>
 
+<?php if (!empty($booking['pickup_otp']) && $booking['status'] === 'confirmed'): ?>
+<div class="card border-warning mb-3" style="border-width:2px">
+  <div class="card-body text-center">
+    <div class="text-muted small"><i class="bi bi-shield-lock"></i> Show this OTP to the agency at pickup</div>
+    <div class="fw-bold" style="font-size:34px;letter-spacing:8px;color:var(--p)"><?= e($booking['pickup_otp']) ?></div>
+    <div class="text-muted small">The vehicle is handed over only after this OTP is verified.</div>
+  </div>
+</div>
+<?php endif; ?>
+
 <div class="card mb-3"><div class="card-body">
   <table class="table table-sm mb-0">
     <tr><td>Vehicle</td><td class="text-end fw-semibold"><?= e($vehicle['name'] ?? '') ?></td></tr>

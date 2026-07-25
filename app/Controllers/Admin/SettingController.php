@@ -19,6 +19,7 @@ class SettingController extends Controller
         'commission_type', 'commission_value', 'commission_on_base_only',
         'primary_color', 'secondary_color', 'contact_mobile', 'contact_whatsapp',
         'contact_email', 'map_link', 'maintenance_mode',
+        'settlement_hold_hours', 'payments_to_platform', 'platform_upi_id', 'platform_payee_name',
         'razorpay_enabled', 'upi_enabled', 'cash_enabled', 'phonepe_enabled', 'cashfree_enabled',
         'smtp_host', 'smtp_port', 'smtp_user', 'smtp_from',
     ];
@@ -32,13 +33,13 @@ class SettingController extends Controller
             foreach ($this->keys as $k) {
                 $v = Request::post($k);
                 // Checkboxes: absent means 0
-                if (in_array($k, ['commission_on_base_only','maintenance_mode','otp_enabled','razorpay_enabled','upi_enabled','cash_enabled','phonepe_enabled','cashfree_enabled'], true)) {
+                if (in_array($k, ['commission_on_base_only','maintenance_mode','otp_enabled','payments_to_platform','razorpay_enabled','upi_enabled','cash_enabled','phonepe_enabled','cashfree_enabled'], true)) {
                     $v = Request::post($k) ? '1' : '0';
                 }
                 Settings::set($k, $v);
             }
-            // Logo / favicon uploads
-            foreach (['logo', 'favicon'] as $img) {
+            // Logo / favicon / platform UPI QR uploads
+            foreach (['logo', 'favicon', 'platform_upi_qr'] as $img) {
                 $file = Request::file($img);
                 if ($file && ($file['error'] ?? 1) === UPLOAD_ERR_OK) {
                     $r = Uploader::handle($file, 'misc', ['jpg','jpeg','png','webp']);

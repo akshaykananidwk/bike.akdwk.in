@@ -151,7 +151,12 @@ $baseUrl   = rtrim(setting('site_url', '') ?: guess_base_url(), '/');
   <a href="<?= e(base_url('/page/privacy')) ?>" class="text-muted">Privacy</a> ·
   <a href="<?= e(base_url('/page/cancellation')) ?>" class="text-muted">Cancellation</a> ·
   <a href="<?= e(base_url('/page/about')) ?>" class="text-muted">About</a>
-  <div class="mt-2">© <?= date('Y') ?> <?= e($siteName) ?> · Bike, Scooty &amp; Car rental in Dwarka</div>
+  <div class="mt-2 d-flex justify-content-center gap-2 flex-wrap">
+    <a href="<?= e(base_url('/shop/login')) ?>" class="btn btn-outline-secondary btn-sm"><i class="bi bi-shop"></i> Shop Login</a>
+    <a href="<?= e(base_url('/agency/login')) ?>" class="btn btn-outline-secondary btn-sm"><i class="bi bi-people"></i> Agency Login</a>
+    <a href="<?= e(base_url('/admin/login')) ?>" class="btn btn-outline-secondary btn-sm"><i class="bi bi-person-badge"></i> Admin</a>
+  </div>
+  <div class="mt-2">© <?= date('Y') ?> <?= e($siteName) ?> · Bike, Car, Taxi &amp; Tempo rental in Dwarka</div>
 </footer>
 
 <script src="<?= e(asset('js/bootstrap.bundle.min.js')) ?>"></script>

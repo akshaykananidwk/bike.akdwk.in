@@ -30,6 +30,16 @@
       <div class="col-12"><div class="form-check form-switch"><input type="checkbox" name="otp_enabled" value="1" class="form-check-input" id="otpen" <?= (!array_key_exists('otp_enabled', $s) || $chk('otp_enabled')) ? 'checked' : '' ?>><label class="form-check-label" for="otpen"><strong>Require mobile OTP at checkout</strong> <span class="text-muted small">(auto-skipped until WhatsApp API is configured, so bookings are never blocked)</span></label></div></div>
     </div></div></div>
 
+    <div class="col-lg-6"><div class="card"><div class="card-header fw-bold">Payment Routing &amp; Settlement</div><div class="card-body">
+      <div class="form-check form-switch mb-2"><input type="checkbox" name="payments_to_platform" value="1" class="form-check-input" id="p2p" <?= (!array_key_exists('payments_to_platform',$s) || $chk('payments_to_platform')) ? 'checked' : '' ?>><label class="form-check-label" for="p2p"><strong>All payments to my (admin) account first</strong> — agencies are settled from their wallet after the hold period.</label></div>
+      <div class="row g-2">
+        <div class="col-6"><label class="form-label">Settlement hold (hours)</label><input name="settlement_hold_hours" type="number" class="form-control" value="<?= $g('settlement_hold_hours','48') ?>"></div>
+        <div class="col-6"><label class="form-label">Platform payee name</label><input name="platform_payee_name" class="form-control" value="<?= $g('platform_payee_name') ?>"></div>
+        <div class="col-12"><label class="form-label">Platform UPI ID (your account)</label><input name="platform_upi_id" class="form-control" value="<?= $g('platform_upi_id') ?>" placeholder="yourname@upi"></div>
+        <div class="col-12"><label class="form-label">Platform UPI QR image</label><input type="file" name="platform_upi_qr" class="form-control" accept="image/*"><?php if (!empty($s['platform_upi_qr'])): ?><img src="<?= e(upload_url($s['platform_upi_qr'])) ?>" style="max-height:120px" class="mt-2 border rounded"><?php endif; ?></div>
+      </div>
+    </div></div></div>
+
     <div class="col-lg-6"><div class="card"><div class="card-header fw-bold">Payment Methods</div><div class="card-body">
       <?php foreach (['razorpay_enabled'=>'Razorpay','upi_enabled'=>'UPI QR (agency-wise)','cash_enabled'=>'Cash / Pay at pickup','phonepe_enabled'=>'PhonePe','cashfree_enabled'=>'Cashfree'] as $k=>$l): ?>
         <div class="form-check form-switch"><input type="checkbox" name="<?= $k ?>" value="1" class="form-check-input" id="<?= $k ?>" <?= $chk($k) ?>><label class="form-check-label" for="<?= $k ?>"><?= e($l) ?></label></div>

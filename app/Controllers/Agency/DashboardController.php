@@ -68,11 +68,18 @@ class DashboardController extends Controller
         $a = $this->agency();
         $booking = Database::fetch("SELECT * FROM {p}bookings WHERE id=? AND agency_id=?", [$p['id'], $a['id'] ?? 0]);
         if ($booking && $booking['status'] === 'confirmed') {
+            // Verify the pickup OTP the customer shows at handover.
+            $otp = preg_replace('/[^0-9]/', '', (string)Request::post('pickup_otp'));
+            if (!empty($booking['pickup_otp']) && !hash_equals((string)$booking['pickup_otp'], (string)$otp)) {
+                Session::flash('error', 'Incorrect pickup OTP. Ask the customer for the 6-digit OTP on their booking screen.');
+                return $this->redirect('/agency/bookings');
+            }
             $update = [
-                'status'      => 'picked_up',
-                'picked_up_at'=> now(),
-                'pickup_odo'  => Request::post('odo') ?: null,
-                'pickup_fuel' => Request::post('fuel') ?: null,
+                'status'          => 'picked_up',
+                'picked_up_at'    => now(),
+                'pickup_verified' => 1,
+                'pickup_odo'      => Request::post('odo') ?: null,
+                'pickup_fuel'     => Request::post('fuel') ?: null,
             ];
             $photo = Request::file('photo');
             if ($photo && ($photo['error'] ?? 1) === UPLOAD_ERR_OK) {

@@ -16,6 +16,13 @@ class SeoController extends Controller
         foreach (Database::fetchAll("SELECT slug FROM {p}pages WHERE status='active'") as $p) {
             $urls[] = base_url('/page/' . $p['slug']);
         }
+        // Category filters + SEO location landing pages (service × location).
+        foreach (Database::fetchAll("SELECT slug FROM {p}categories WHERE status='active'") as $c) {
+            $urls[] = base_url('/vehicles?category=' . $c['slug']);
+        }
+        foreach (\App\Controllers\Front\SeoLandingController::slugs() as $slug) {
+            $urls[] = base_url('/rent/' . $slug);
+        }
         $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
         foreach ($urls as $u) {

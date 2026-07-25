@@ -161,12 +161,19 @@ $siteName = setting('site_name', 'Dwarka Rental');
           One-way and round-trip cabs, 12 &amp; 17-seater tempo travellers, hourly and daily packages — all at the best price.
         </p>
         <div class="d-flex flex-wrap gap-1">
-          <?php foreach ([
-            'Bike rent in Dwarka','Scooty on rent','Activa rental','Self-drive car','Taxi service','Cab booking',
-            'Car with driver','Tempo traveller','Dwarka darshan taxi','Dwarka to Somnath','Dwarka to Okha',
-            'Beyt Dwarka','Nageshwar','Gomti Ghat','Cycle hire'
-          ] as $k): ?>
-            <span class="pill" style="background:#eef2f8;color:var(--muted)"><?= e($k) ?></span>
+          <?php
+          // Internal links to SEO landing pages (service in location).
+          $popular = [
+            'bike-rental-in-dwarka'=>'Bike rental in Dwarka','scooty-rental-in-dwarka'=>'Scooty on rent Dwarka',
+            'car-rental-in-dwarka'=>'Car rental Dwarka','taxi-service-in-dwarka'=>'Taxi service Dwarka',
+            'cab-booking-in-dwarka'=>'Cab booking Dwarka','car-with-driver-in-dwarka'=>'Car with driver',
+            'tempo-traveller-in-dwarka'=>'Tempo traveller Dwarka','self-drive-car-in-dwarka'=>'Self-drive car',
+            'bike-rental-in-okha'=>'Bike rental Okha','taxi-service-in-okha'=>'Taxi in Okha',
+            'car-rental-in-mithapur'=>'Car rental Mithapur','taxi-service-in-beyt-dwarka'=>'Taxi Beyt Dwarka',
+            'cycle-rental-in-dwarka'=>'Cycle hire Dwarka','tempo-traveller-in-nageshwar'=>'Tempo Nageshwar',
+          ];
+          foreach ($popular as $slug => $label): ?>
+            <a class="pill text-decoration-none" style="background:#eef2f8;color:var(--muted)" href="<?= e(base_url('/rent/'.$slug)) ?>"><?= e($label) ?></a>
           <?php endforeach; ?>
         </div>
       </div>

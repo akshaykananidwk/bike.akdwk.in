@@ -1,7 +1,10 @@
 <?php /** @var array $wallet,$txns,$payouts,$agency; float $minWithdrawal */ ?>
 <div class="card mb-3"><div class="card-body text-center">
-  <div class="text-muted small">Settlement Balance</div>
+  <div class="text-muted small">Available to withdraw</div>
   <div class="display-6 fw-bold text-success"><?= money($wallet['balance']) ?></div>
+  <?php if (($wallet['pending_balance'] ?? 0) > 0): ?>
+    <div class="badge bg-warning text-dark mt-1"><i class="bi bi-hourglass-split"></i> <?= money($wallet['pending_balance']) ?> on hold (48h settlement)</div>
+  <?php endif; ?>
   <div class="d-flex justify-content-around mt-2 small text-muted">
     <div>Earned<br><span class="fw-bold text-dark"><?= money($wallet['total_earned'] ?? 0) ?></span></div>
     <div>Withdrawn<br><span class="fw-bold text-dark"><?= money($wallet['total_withdrawn'] ?? 0) ?></span></div>

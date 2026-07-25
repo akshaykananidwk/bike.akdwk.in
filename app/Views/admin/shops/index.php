@@ -40,6 +40,7 @@
         <div class="btn-group btn-group-sm">
           <a class="btn btn-outline-secondary" href="<?= e(base_url('/admin/shops/'.$s['id'].'/qr')) ?>" title="QR"><i class="bi bi-qr-code"></i></a>
           <a class="btn btn-outline-success" href="<?= e(base_url('/admin/shops/'.$s['id'].'/poster?format=pdf&size=A4')) ?>" title="Poster PDF"><i class="bi bi-file-earmark-pdf"></i></a>
+          <a class="btn btn-outline-dark" href="<?= e(base_url('/admin/shops/'.$s['id'].'/login-as')) ?>" title="Login as this shop"><i class="bi bi-box-arrow-in-right"></i></a>
           <a class="btn btn-outline-primary" href="<?= e(base_url('/admin/shops/'.$s['id'].'/edit')) ?>"><i class="bi bi-pencil"></i></a>
           <form method="post" action="<?= e(base_url('/admin/shops/'.$s['id'].'/delete')) ?>" onsubmit="return confirm('Delete this shop?')" class="d-inline">
             <?= csrf_field() ?><button class="btn btn-outline-danger"><i class="bi bi-trash"></i></button>

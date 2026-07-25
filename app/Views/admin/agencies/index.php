@@ -17,6 +17,7 @@
       <td><?= money($a['wallet'] ?? 0) ?></td>
       <td><span class="badge bg-<?= $a['status']==='active'?'success':'secondary' ?>"><?= e($a['status']) ?></span></td>
       <td class="text-nowrap"><div class="btn-group btn-group-sm">
+        <a class="btn btn-outline-dark" href="<?= e(base_url('/admin/agencies/'.$a['id'].'/login-as')) ?>" title="Login as this agency"><i class="bi bi-box-arrow-in-right"></i></a>
         <a class="btn btn-outline-primary" href="<?= e(base_url('/admin/agencies/'.$a['id'].'/edit')) ?>"><i class="bi bi-pencil"></i></a>
         <form method="post" action="<?= e(base_url('/admin/agencies/'.$a['id'].'/delete')) ?>" onsubmit="return confirm('Delete this agency?')"><?= csrf_field() ?><button class="btn btn-outline-danger"><i class="bi bi-trash"></i></button></form>
       </div></td>

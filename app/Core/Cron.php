@@ -16,6 +16,7 @@ class Cron
             'pickup_reminders'=> self::pickupReminders(),
             'return_reminders'=> self::returnReminders(),
             'auto_cancelled'  => self::autoCancelUnpaid(),
+            'funds_released'  => \App\Services\WalletService::releaseHeld(),
             'update_check'    => self::dailyUpdateCheck(),
         ];
     }

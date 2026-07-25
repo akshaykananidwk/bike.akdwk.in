@@ -28,6 +28,12 @@ $primary = setting('primary_color', '#0d6efd');
 </style>
 </head>
 <body>
+<?php if (\App\Core\Auth::isImpersonating()): ?>
+<div style="background:#111;color:#ffd54f;text-align:center;padding:6px 10px;font-size:13px">
+  <i class="bi bi-incognito"></i> You are logged in as this partner (admin view) ·
+  <a href="<?= e(base_url('/admin/return')) ?>" class="text-warning fw-bold">Return to Admin</a>
+</div>
+<?php endif; ?>
 <div class="topbar">
   <div class="fw-bold"><?= e($title ?? '') ?></div>
   <div class="d-flex align-items-center gap-2">
