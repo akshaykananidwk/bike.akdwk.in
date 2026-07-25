@@ -1,4 +1,9 @@
 <?php /** @var array $shop,$wallet; float $todayC,$totalC,$monthC; int $todayBookings */ ?>
+<?php if (($shop['status'] ?? '') !== 'active'): ?>
+  <div class="alert alert-warning py-2 small"><i class="bi bi-hourglass-split"></i>
+    <strong>Pending approval.</strong> Your shop is registered but not live yet. Our team will verify and activate it shortly —
+    then your QR poster will start earning commission.</div>
+<?php endif; ?>
 <div class="mb-2"><span class="badge bg-dark"><?= e($shop['code']) ?></span> <span class="text-muted small"><?= e($shop['name']) ?></span></div>
 <div class="row g-2 mb-3">
   <div class="col-6"><div class="stat" style="background:#0d6efd"><div class="small opacity-75"><?= e(__('today_bookings')) ?></div><div class="fs-4 fw-bold"><?= $todayBookings ?></div></div></div>

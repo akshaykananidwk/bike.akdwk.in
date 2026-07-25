@@ -18,6 +18,9 @@
       <button class="btn btn-success btn-lg w-100">Login</button>
     </form>
   </div>
-  <div class="text-center mt-2"><a href="<?= e(base_url('/')) ?>" class="text-white small">← Back to site</a></div>
+  <div class="text-center mt-3">
+    <div class="text-white small mb-2">New shop? <a href="<?= e(base_url('/shop/register')) ?>" class="text-white fw-bold text-decoration-underline">Register your shop free</a></div>
+    <a href="<?= e(base_url('/')) ?>" class="text-white small">← Back to site</a>
+  </div>
 </div>
 </body></html>

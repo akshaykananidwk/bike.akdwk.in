@@ -122,6 +122,9 @@ $baseUrl   = rtrim(setting('site_url', '') ?: guess_base_url(), '/');
       <span class="jai">🙏 Jai Dwarkadhish</span>
     </a>
     <div class="d-flex align-items-center gap-2">
+      <?php if (setting('voice_greeting_enabled', '1') === '1'): ?>
+        <button type="button" class="btn btn-sm btn-outline-secondary tap" id="voiceBtn" title="Jai Dwarkadhish voice greeting" aria-label="Toggle voice greeting"><i class="bi bi-volume-up" id="voiceIcon"></i></button>
+      <?php endif; ?>
       <a href="<?= e(base_url('/my-bookings')) ?>" class="btn btn-sm btn-outline-primary tap" title="My Bookings"><i class="bi bi-bag-check"></i> My Bookings</a>
     </div>
   </div>
@@ -151,6 +154,13 @@ $baseUrl   = rtrim(setting('site_url', '') ?: guess_base_url(), '/');
   <a href="<?= e(base_url('/page/privacy')) ?>" class="text-muted">Privacy</a> ·
   <a href="<?= e(base_url('/page/cancellation')) ?>" class="text-muted">Cancellation</a> ·
   <a href="<?= e(base_url('/page/about')) ?>" class="text-muted">About</a>
+  <div class="mt-3 mb-2">
+    <div class="fw-bold" style="color:var(--ink)">Partner with us</div>
+    <div class="d-flex justify-content-center gap-2 flex-wrap mt-2">
+      <a href="<?= e(base_url('/shop/register')) ?>" class="btn btn-success btn-sm"><i class="bi bi-shop"></i> Register Your Shop</a>
+      <a href="<?= e(base_url('/agency/register')) ?>" class="btn btn-warning btn-sm"><i class="bi bi-people"></i> List Your Vehicles</a>
+    </div>
+  </div>
   <div class="mt-2 d-flex justify-content-center gap-2 flex-wrap">
     <a href="<?= e(base_url('/shop/login')) ?>" class="btn btn-outline-secondary btn-sm"><i class="bi bi-shop"></i> Shop Login</a>
     <a href="<?= e(base_url('/agency/login')) ?>" class="btn btn-outline-secondary btn-sm"><i class="bi bi-people"></i> Agency Login</a>
@@ -160,6 +170,88 @@ $baseUrl   = rtrim(setting('site_url', '') ?: guess_base_url(), '/');
 </footer>
 
 <script src="<?= e(asset('js/bootstrap.bundle.min.js')) ?>"></script>
+
+<?php if (setting('voice_greeting_enabled', '1') === '1'): ?>
+<script>
+/* "Jai Dwarkadhish" spoken greeting.
+   Browsers block audio before a user gesture, so we try immediately and, if the
+   browser refuses, speak on the visitor's first tap/scroll instead. Plays once
+   per visit and can be muted with the speaker button (remembered). */
+(function(){
+  var MUTE_KEY='dwk_voice_muted', SPOKEN_KEY='dwk_greeted';
+  var btn=document.getElementById('voiceBtn'), icon=document.getElementById('voiceIcon');
+
+  function muted(){ try{ return localStorage.getItem(MUTE_KEY)==='1'; }catch(e){ return false; } }
+  function setMuted(v){ try{ localStorage.setItem(MUTE_KEY, v?'1':'0'); }catch(e){} paint(); }
+  function paint(){ if(icon) icon.className = muted() ? 'bi bi-volume-mute' : 'bi bi-volume-up'; }
+
+  function pickVoice(){
+    var v = window.speechSynthesis.getVoices() || [];
+    // Prefer an Indian-language voice so the pronunciation sounds natural.
+    return v.find(function(x){ return /^gu/i.test(x.lang); })
+        || v.find(function(x){ return /^hi/i.test(x.lang); })
+        || v.find(function(x){ return /en[-_]IN/i.test(x.lang); })
+        || null;
+  }
+
+  function speak(force){
+    if(!('speechSynthesis' in window)) return false;
+    if(muted() && !force) return false;
+    try{
+      var voice=pickVoice();
+      // Devanagari/Gujarati text makes an Indic voice say it correctly;
+      // otherwise fall back to a phonetic English spelling.
+      var indic = voice && /^(gu|hi)/i.test(voice.lang);
+      var u=new SpeechSynthesisUtterance(indic ? 'जय द्वारकाधीश' : 'Jai Dwarkadhish');
+      u.lang = voice ? voice.lang : 'en-IN';
+      if(voice) u.voice=voice;
+      u.rate=0.85; u.pitch=1; u.volume=1;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(u);
+      return true;
+    }catch(e){ return false; }
+  }
+
+  function greetOnce(){
+    if(muted()) return;
+    try{ if(sessionStorage.getItem(SPOKEN_KEY)==='1') return; }catch(e){}
+    speak(false);
+    try{ sessionStorage.setItem(SPOKEN_KEY,'1'); }catch(e){}
+  }
+
+  // Speak after voices are ready (they load asynchronously on many browsers).
+  function ready(fn){
+    if(!('speechSynthesis' in window)) return;
+    if((window.speechSynthesis.getVoices()||[]).length){ fn(); return; }
+    window.speechSynthesis.addEventListener('voiceschanged', function once(){
+      window.speechSynthesis.removeEventListener('voiceschanged', once); fn();
+    });
+    setTimeout(fn, 1200); // safety net if the event never fires
+  }
+
+  // 1) Try right away (works where autoplay is permitted).
+  ready(function(){ setTimeout(greetOnce, <?= $showSplash ? 900 : 300 ?>); });
+
+  // 2) Autoplay blocked? Speak on the visitor's first interaction instead.
+  ['pointerdown','touchstart','keydown','scroll'].forEach(function(ev){
+    window.addEventListener(ev, function once(){
+      ['pointerdown','touchstart','keydown','scroll'].forEach(function(e2){ window.removeEventListener(e2, once); });
+      greetOnce();
+    }, {once:true, passive:true});
+  });
+
+  // Speaker button: muted -> unmute & speak now; unmuted -> mute & stop.
+  if(btn){
+    paint();
+    btn.addEventListener('click', function(){
+      if(muted()){ setMuted(false); speak(true); }
+      else { setMuted(true); try{ window.speechSynthesis.cancel(); }catch(e){} }
+    });
+  }
+})();
+</script>
+<?php endif; ?>
+
 <script>
 window.CSRF=document.querySelector('meta[name=csrf-token]').content;
 <?php if ($showSplash): ?>setTimeout(function(){var s=document.getElementById('jsplash');if(s)s.remove();},2600);<?php endif; ?>

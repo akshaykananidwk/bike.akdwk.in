@@ -7,6 +7,39 @@ $cards = [
     ['active_vehicles', 'Active Vehicles', $stats['active_vehicles'], '#8b5cf6', 'bi-scooter'],
 ];
 ?>
+<?php if ($pendingShops || $pendingAgencies): ?>
+<div class="alert alert-warning shadow-sm">
+  <div class="fw-bold mb-2"><i class="bi bi-person-plus"></i> New partner registrations awaiting your approval</div>
+  <div class="table-responsive">
+    <table class="table table-sm mb-0 align-middle">
+      <tbody>
+      <?php foreach ($pendingShops as $ps): ?>
+        <tr>
+          <td><span class="badge bg-success">Shop</span></td>
+          <td><span class="badge bg-dark"><?= e($ps['code']) ?></span></td>
+          <td><?= e($ps['name']) ?></td>
+          <td><?= e($ps['mobile']) ?></td>
+          <td><small class="text-muted"><?= e(date('d M h:iA', strtotime($ps['created_at']))) ?></small></td>
+          <td class="text-end"><a href="<?= e(base_url('/admin/shops/'.$ps['id'].'/edit')) ?>" class="btn btn-sm btn-primary">Review &amp; Approve</a></td>
+        </tr>
+      <?php endforeach; ?>
+      <?php foreach ($pendingAgencies as $pa): ?>
+        <tr>
+          <td><span class="badge bg-warning text-dark">Agency</span></td>
+          <td><span class="badge bg-dark"><?= e($pa['code']) ?></span></td>
+          <td><?= e($pa['name']) ?></td>
+          <td><?= e($pa['mobile']) ?></td>
+          <td><small class="text-muted"><?= e(date('d M h:iA', strtotime($pa['created_at']))) ?></small></td>
+          <td class="text-end"><a href="<?= e(base_url('/admin/agencies/'.$pa['id'].'/edit')) ?>" class="btn btn-sm btn-primary">Review &amp; Approve</a></td>
+        </tr>
+      <?php endforeach; ?>
+      </tbody>
+    </table>
+  </div>
+  <div class="small text-muted mt-1">Set <strong>Status = Active</strong> on the partner's page to make them live.</div>
+</div>
+<?php endif; ?>
+
 <div class="row g-3 mb-3">
   <?php foreach ($cards as [$key, $label, $value, $color, $icon]): ?>
   <div class="col-6 col-lg-3">

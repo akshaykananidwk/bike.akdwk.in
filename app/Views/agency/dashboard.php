@@ -1,4 +1,9 @@
 <?php /** @var array $agency,$stats,$upcoming */ ?>
+<?php if (($agency['status'] ?? '') !== 'active'): ?>
+  <div class="alert alert-warning py-2 small"><i class="bi bi-hourglass-split"></i>
+    <strong>Pending approval.</strong> Your agency is registered but not live yet. Our team will verify and activate it shortly —
+    then your vehicles can receive bookings.</div>
+<?php endif; ?>
 <div class="mb-2"><span class="badge bg-dark"><?= e($agency['code']) ?></span> <span class="text-muted small"><?= e($agency['name']) ?></span></div>
 <div class="row g-2 mb-3">
   <div class="col-6"><div class="stat" style="background:#0d6efd"><div class="small opacity-75">Vehicles</div><div class="fs-4 fw-bold"><?= $stats['vehicles'] ?></div></div></div>

@@ -108,6 +108,7 @@ $router->group(['prefix' => '/admin', 'middleware' => ['AdminAuth']], function (
 });
 
 // --- Shop partner panel (Phase 5) -----------------------------------------
+$router->any('/shop/register', 'Shop\RegisterController@register');
 $router->any('/shop/login', 'Shop\AuthController@login');
 $router->get('/shop/logout', 'Shop\AuthController@logout');
 $router->group(['prefix' => '/shop', 'middleware' => ['ShopAuth']], function ($r) {
@@ -123,6 +124,7 @@ $router->group(['prefix' => '/shop', 'middleware' => ['ShopAuth']], function ($r
 });
 
 // --- Agency panel (Phase 5) -----------------------------------------------
+$router->any('/agency/register', 'Agency\RegisterController@register');
 $router->any('/agency/login', 'Agency\AuthController@login');
 $router->get('/agency/logout', 'Agency\AuthController@logout');
 $router->group(['prefix' => '/agency', 'middleware' => ['AgencyAuth']], function ($r) {

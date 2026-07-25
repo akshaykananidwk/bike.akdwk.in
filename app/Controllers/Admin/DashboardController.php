@@ -41,6 +41,14 @@ class DashboardController extends Controller
              LIMIT 8"
         );
 
+        // Partners who registered themselves and are waiting for approval.
+        $pendingShops = Database::fetchAll(
+            "SELECT id, code, name, mobile, created_at FROM {p}shops WHERE source='self' AND status<>'active' ORDER BY id DESC LIMIT 10"
+        );
+        $pendingAgencies = Database::fetchAll(
+            "SELECT id, code, name, mobile, created_at FROM {p}agencies WHERE source='self' AND status<>'active' ORDER BY id DESC LIMIT 10"
+        );
+
         $recent = Database::fetchAll(
             "SELECT b.code, b.customer_name, b.total_amount, b.paid_amount, b.status, b.created_at,
                     v.name AS vehicle_name, s.name AS shop_name
@@ -53,10 +61,12 @@ class DashboardController extends Controller
         return $this->view('admin/dashboard', [
             'title'    => 'Dashboard',
             'active'   => 'dashboard',
-            'stats'    => $stats,
-            'series'   => $series,
-            'topShops' => $topShops,
-            'recent'   => $recent,
+            'stats'           => $stats,
+            'series'          => $series,
+            'topShops'        => $topShops,
+            'recent'          => $recent,
+            'pendingShops'    => $pendingShops,
+            'pendingAgencies' => $pendingAgencies,
         ], 'admin');
     }
 }
