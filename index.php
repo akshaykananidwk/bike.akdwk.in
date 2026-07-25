@@ -28,6 +28,23 @@ if (!is_file($lockFile)) {
 require BASE_PATH . '/app/bootstrap.php';
 
 use App\Core\Router;
+use App\Core\Settings;
+use App\Core\Auth;
+use App\Core\Request;
+
+// Maintenance mode: block the public site (admins + panel logins still pass).
+if (Settings::get('maintenance_mode') === '1') {
+    $uri = Request::uri();
+    $exempt = preg_match('#^/(admin|shop/login|agency/login|api/)#', $uri) === 1;
+    if (!$exempt && !(Auth::check() && Auth::is('super_admin', 'staff'))) {
+        http_response_code(503);
+        header('Retry-After: 3600');
+        $tpl = BASE_PATH . '/app/Views/errors/maintenance.php';
+        if (is_file($tpl)) { require $tpl; }
+        else { echo 'We are performing maintenance. Please check back shortly.'; }
+        exit;
+    }
+}
 
 $router = new Router();
 require BASE_PATH . '/routes/web.php';
