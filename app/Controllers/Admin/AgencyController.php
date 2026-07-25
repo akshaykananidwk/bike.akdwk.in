@@ -66,14 +66,17 @@ class AgencyController extends Controller
             else { Session::flash('error', $r['error']); return $this->redirect($_SERVER['HTTP_REFERER'] ?? '/admin/agencies'); }
         }
 
+        $loginPassword = Request::post('login_password');
         if ($agency) {
             Database::update('agencies', $fields, ['id' => $agency['id']]);
+            \App\Services\PanelUser::upsert('agency', (int)$agency['id'], $fields['name'], $fields['mobile'], $fields['email'], $loginPassword);
             ActivityLog::record('agency.update', 'agency', $agency['id'], $agency, $fields);
             Session::flash('success', 'Agency updated.');
         } else {
             $fields['code'] = Request::post('code') ?: $this->nextCode();
             $id = Database::insert('agencies', $fields);
             Database::insert('wallets', ['owner_type' => 'agency', 'owner_id' => $id, 'balance' => 0]);
+            \App\Services\PanelUser::upsert('agency', $id, $fields['name'], $fields['mobile'], $fields['email'], $loginPassword);
             ActivityLog::record('agency.create', 'agency', $id, [], $fields);
             Session::flash('success', 'Agency created with code ' . $fields['code'] . '.');
         }

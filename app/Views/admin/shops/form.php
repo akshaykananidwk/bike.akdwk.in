@@ -46,6 +46,12 @@ $errs = \App\Core\Session::flash('errors') ?? [];
         <input id="cv" name="commission_value" type="number" step="0.01" class="form-control" value="<?= $val('commission_value','0') ?>" <?= ($s['commission_type'] ?? 'inherit')==='inherit'?'disabled':'' ?>>
       </div></div>
 
+      <div class="card mt-3"><div class="card-header fw-bold">Partner Login</div><div class="card-body">
+        <label class="form-label">Set / Reset Password</label>
+        <input type="password" name="login_password" class="form-control" placeholder="Min 6 chars (leave blank to keep)">
+        <small class="text-muted">Login = shop mobile (<?= e($s['mobile'] ?? '') ?>). Partner logs in at /shop/login.</small>
+      </div></div>
+
       <div class="card mt-3"><div class="card-header fw-bold">Status</div><div class="card-body">
         <label class="form-label">KYC Status</label>
         <select name="kyc_status" class="form-select mb-2">

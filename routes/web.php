@@ -106,6 +106,7 @@ $router->group(['prefix' => '/shop', 'middleware' => ['ShopAuth']], function ($r
     $r->get('/', 'Shop\DashboardController@index');
     $r->get('/bookings', 'Shop\DashboardController@bookings');
     $r->get('/qr', 'Shop\DashboardController@qr');
+    $r->get('/poster', 'Shop\DashboardController@poster');
     $r->any('/wallet', 'Shop\WalletController@index');
     $r->any('/withdraw', 'Shop\WalletController@withdraw');
     $r->any('/bank', 'Shop\WalletController@bank');

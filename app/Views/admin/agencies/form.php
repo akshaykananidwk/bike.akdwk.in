@@ -28,6 +28,12 @@ $errs = \App\Core\Session::flash('errors') ?? []; ?>
         <label class="form-label">UPI QR Image</label><input type="file" name="upi_qr_image" accept="image/*" class="form-control">
         <?php if (!empty($a['upi_qr_image'])): ?><img src="<?= e(upload_url($a['upi_qr_image'])) ?>" class="img-fluid mt-2 border rounded" style="max-height:160px"><?php endif; ?>
       </div></div>
+      <div class="card mt-3"><div class="card-header fw-bold">Agency Login</div><div class="card-body">
+        <label class="form-label">Set / Reset Password</label>
+        <input type="password" name="login_password" class="form-control" placeholder="Min 6 chars (leave blank to keep)">
+        <small class="text-muted">Login = agency mobile. Logs in at /agency/login.</small>
+      </div></div>
+
       <div class="card mt-3"><div class="card-header fw-bold">Commission</div><div class="card-body">
         <label class="form-label">Type</label>
         <select name="commission_type" class="form-select mb-2"><?php foreach (['inherit'=>'Inherit Global','percent'=>'Percentage %','fixed'=>'Fixed ₹'] as $k=>$l): ?><option value="<?= $k ?>" <?= ($a['commission_type'] ?? 'inherit')===$k?'selected':'' ?>><?= $l ?></option><?php endforeach; ?></select>

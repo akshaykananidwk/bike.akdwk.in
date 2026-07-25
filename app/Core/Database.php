@@ -117,9 +117,16 @@ class Database
     public static function commit(): void { self::pdo()->commit(); }
     public static function rollBack(): void { if (self::pdo()->inTransaction()) { self::pdo()->rollBack(); } }
 
-    /** Convenience: run a closure inside a transaction. */
+    /**
+     * Run a closure inside a transaction. Reentrant: if a transaction is
+     * already active, the closure runs within it (no nested BEGIN, which MySQL
+     * does not support) and the outer caller controls commit/rollback.
+     */
     public static function transaction(callable $fn)
     {
+        if (self::pdo()->inTransaction()) {
+            return $fn();
+        }
         self::beginTransaction();
         try {
             $result = $fn();

@@ -99,17 +99,20 @@ class ShopController extends Controller
             }
         }
 
+        $loginPassword = Request::post('login_password');
         if ($shop) {
             Database::update('shops', $fields, ['id' => $shop['id']]);
+            \App\Services\PanelUser::upsert('shop', (int)$shop['id'], $fields['name'], $fields['mobile'], $fields['email'], $loginPassword);
             ActivityLog::record('shop.update', 'shop', $shop['id'], $shop, $fields);
             Session::flash('success', 'Shop updated.');
         } else {
             $fields['code'] = Request::post('code') ?: $this->nextCode();
             $id = Database::insert('shops', $fields);
-            // Create wallet
+            // Create wallet + optional partner login
             Database::insert('wallets', ['owner_type' => 'shop', 'owner_id' => $id, 'balance' => 0]);
+            \App\Services\PanelUser::upsert('shop', $id, $fields['name'], $fields['mobile'], $fields['email'], $loginPassword);
             ActivityLog::record('shop.create', 'shop', $id, [], $fields);
-            Session::flash('success', 'Shop created with code ' . $fields['code'] . '.');
+            Session::flash('success', 'Shop created with code ' . $fields['code'] . '.' . ($loginPassword ? ' Partner login enabled.' : ''));
         }
         return $this->redirect('/admin/shops');
     }
