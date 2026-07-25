@@ -6,8 +6,8 @@ $primary   = setting('primary_color', '#0d6efd');
 $secondary = setting('secondary_color', '#20c997');
 $siteName  = setting('site_name', 'Dwarka Rental');
 $refShop   = Session::get('ref_shop_name');
-$desc      = 'Rent a bike, scooty, Activa, car, tempo traveller or cycle in Dwarka. Instant online booking, verified vehicles, best price, doorstep pickup near Dwarkadhish Temple, Gomti Ghat, Beyt Dwarka & Nageshwar. બાઇક, સ્કૂટી, એક્ટિવા અને કાર ભાડે — દ્વારકા.';
-$keywords  = 'bike rent in dwarka, bike rental dwarka, rent bike near me, two wheeler rental dwarka, scooty rent dwarka, activa on rent dwarka, car rental dwarka, self drive car dwarka, tempo traveller dwarka, cycle rental dwarka, bike hire dwarka, devbhoomi dwarka vehicle rental, beyt dwarka bike rent, nageshwar bike rental, gomti ghat, dwarkadhish temple, okha, mithapur, द्वारका बाइक रेंट, દ્વારકા બાઇક ભાડે, દ્વારકા સ્કૂટી ભાડે, દ્વારકા કાર ભાડે';
+$desc      = 'Book a bike, scooty, Activa, self-drive car, taxi, cab or tempo traveller in Dwarka. Instant online booking, verified vehicles, lowest price, doorstep pickup near Dwarkadhish Temple, Gomti Ghat, Beyt Dwarka, Nageshwar & Okha. Dwarka darshan taxi, Dwarka to Somnath cab, one-way & round-trip.';
+$keywords  = 'bike rent in dwarka, bike rental dwarka, rent bike near me, bike on rent, two wheeler rental dwarka, scooty rent dwarka, scooter on rent dwarka, activa on rent dwarka, car rental dwarka, car on rent dwarka, self drive car dwarka, self drive car rental near me, taxi in dwarka, taxi booking dwarka, dwarka taxi service, cab booking dwarka, online cab dwarka, car with driver dwarka, tempo traveller dwarka, tempo traveller on rent, tempo booking dwarka, bus rental dwarka, 12 seater tempo, 17 seater tempo traveller, dwarka darshan taxi, dwarka darshan by car, dwarka local sightseeing taxi, dwarka to somnath taxi, dwarka to somnath cab, dwarka to okha taxi, dwarka to beyt dwarka, dwarka to nageshwar, dwarka to rajkot taxi, dwarka to jamnagar cab, dwarka to porbandar taxi, dwarka to ahmedabad cab, dwarka airport taxi, jamnagar to dwarka taxi, dwarka railway station taxi, one way taxi dwarka, round trip taxi dwarka, outstation cab dwarka, cheap taxi dwarka, best car rental dwarka, cycle rental dwarka, bike hire dwarka, two wheeler hire, vehicle rental dwarka, devbhoomi dwarka vehicle rental, rent a car dwarka, rent a bike dwarka, book taxi online dwarka, dwarkadhish temple, gomti ghat, beyt dwarka, nageshwar jyotirlinga, okha, mithapur, rukmini temple';
 $showSplash = $splash ?? false;
 $baseUrl   = rtrim(setting('site_url', '') ?: guess_base_url(), '/');
 ?>
@@ -32,9 +32,17 @@ $baseUrl   = rtrim(setting('site_url', '') ?: guess_base_url(), '/');
 <meta property="og:image" content="<?= e(setting('logo') ? upload_url(setting('logo')) : $baseUrl . '/assets/img/og.png') ?>">
 <meta name="twitter:card" content="summary_large_image">
 <?= $meta ?? '' ?>
-<!-- LocalBusiness + WebSite structured data (helps local Google ranking) -->
+<!-- LocalBusiness + FAQ structured data (helps local Google ranking & rich results) -->
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"AutoRental","name":<?= json_encode($siteName) ?>,"image":<?= json_encode(setting('logo') ? upload_url(setting('logo')) : '') ?>,"url":<?= json_encode($baseUrl) ?>,"telephone":<?= json_encode(setting('contact_mobile', '')) ?>,"priceRange":"₹₹","areaServed":"Devbhoomi Dwarka, Gujarat","address":{"@type":"PostalAddress","addressLocality":"Dwarka","addressRegion":"Gujarat","addressCountry":"IN"},"geo":{"@type":"GeoCoordinates","latitude":22.2394,"longitude":68.9678},"openingHours":"Mo-Su 06:00-23:00"}
+{"@context":"https://schema.org","@type":["AutoRental","TaxiService","LocalBusiness"],"name":<?= json_encode($siteName) ?>,"image":<?= json_encode(setting('logo') ? upload_url(setting('logo')) : '') ?>,"url":<?= json_encode($baseUrl) ?>,"telephone":<?= json_encode(setting('contact_mobile', '')) ?>,"priceRange":"₹₹","areaServed":["Dwarka","Devbhoomi Dwarka","Beyt Dwarka","Okha","Nageshwar","Gujarat"],"makesOffer":["Bike rental","Scooty rental","Activa on rent","Self-drive car rental","Taxi service","Cab booking","Tempo traveller booking","Cycle rental","Dwarka darshan taxi"],"address":{"@type":"PostalAddress","addressLocality":"Dwarka","addressRegion":"Gujarat","postalCode":"361335","addressCountry":"IN"},"geo":{"@type":"GeoCoordinates","latitude":22.2394,"longitude":68.9678},"openingHours":"Mo-Su 06:00-23:00"}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"How can I rent a bike or scooty in Dwarka?","acceptedAnswer":{"@type":"Answer","text":"Choose a bike, scooty or Activa on <?= e($siteName) ?>, pick your dates, upload your driving licence and pay online. Pickup is available near Dwarkadhish Temple, Gomti Ghat and the bus stand."}},
+{"@type":"Question","name":"Do you provide taxi and tempo traveller booking in Dwarka?","acceptedAnswer":{"@type":"Answer","text":"Yes. Book a taxi, cab, self-drive car or tempo traveller for Dwarka darshan, local sightseeing or outstation trips like Dwarka to Somnath, Okha, Nageshwar and Beyt Dwarka."}},
+{"@type":"Question","name":"What are the rental charges?","acceptedAnswer":{"@type":"Answer","text":"Bikes and scooters start from an affordable hourly and daily rate with a refundable deposit. Cars, taxis and tempo travellers are priced per trip or per day. See live prices on the vehicles page."}},
+{"@type":"Question","name":"Which documents are required?","acceptedAnswer":{"@type":"Answer","text":"A valid driving licence is required for self-drive bikes and cars. Carry a government ID (Aadhaar) for verification."}}
+]}
 </script>
 <link rel="manifest" href="<?= e(base_url('/manifest.webmanifest')) ?>">
 <!-- Self-hosted assets (fast, no CDN dependency, works offline via PWA) -->
@@ -98,7 +106,7 @@ $baseUrl   = rtrim(setting('site_url', '') ?: guess_base_url(), '/');
 <?php if ($showSplash): ?>
 <div id="jsplash">
   <div class="mandala">🛕</div>
-  <h1>જય દ્વારકાધીશ</h1>
+  <h1>Jai Dwarkadhish</h1>
   <p>🙏 Welcome to <?= e($siteName) ?></p>
 </div>
 <?php endif; ?>
@@ -111,14 +119,10 @@ $baseUrl   = rtrim(setting('site_url', '') ?: guess_base_url(), '/');
   <div class="container d-flex align-items-center justify-content-between py-2">
     <a href="<?= e(base_url('/')) ?>" class="d-flex flex-column">
       <span class="brand"><?php if (setting('logo')): ?><img src="<?= e(upload_url(setting('logo'))) ?>" style="height:30px;vertical-align:middle"> <?php else: ?>🛵 <?php endif; ?><?= e($siteName) ?></span>
-      <span class="jai">🙏 જય દ્વારકાધીશ</span>
+      <span class="jai">🙏 Jai Dwarkadhish</span>
     </a>
     <div class="d-flex align-items-center gap-2">
-      <div class="btn-group btn-group-sm">
-        <a href="<?= e(base_url('/lang/en')) ?>" class="btn btn-outline-secondary <?= Lang::locale()==='en'?'active':'' ?>">EN</a>
-        <a href="<?= e(base_url('/lang/gu')) ?>" class="btn btn-outline-secondary <?= Lang::locale()==='gu'?'active':'' ?>">ગુ</a>
-      </div>
-      <a href="<?= e(base_url('/my-bookings')) ?>" class="btn btn-sm btn-outline-primary tap" title="My Bookings"><i class="bi bi-bag-check"></i></a>
+      <a href="<?= e(base_url('/my-bookings')) ?>" class="btn btn-sm btn-outline-primary tap" title="My Bookings"><i class="bi bi-bag-check"></i> My Bookings</a>
     </div>
   </div>
 </nav>
@@ -142,7 +146,7 @@ $baseUrl   = rtrim(setting('site_url', '') ?: guess_base_url(), '/');
 </nav>
 
 <footer class="text-center small text-muted py-4" style="margin-bottom:60px">
-  <div class="jai mb-2" style="font-size:15px">🙏 જય દ્વારકાધીશ</div>
+  <div class="jai mb-2" style="font-size:15px">🙏 Jai Dwarkadhish</div>
   <a href="<?= e(base_url('/page/terms')) ?>" class="text-muted">Terms</a> ·
   <a href="<?= e(base_url('/page/privacy')) ?>" class="text-muted">Privacy</a> ·
   <a href="<?= e(base_url('/page/cancellation')) ?>" class="text-muted">Cancellation</a> ·

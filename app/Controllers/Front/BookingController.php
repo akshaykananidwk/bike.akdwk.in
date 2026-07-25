@@ -36,9 +36,10 @@ class BookingController extends Controller
         }
 
         return $this->view('front/booking', [
-            'title'   => 'Book ' . $vehicle['name'],
-            'vehicle' => $vehicle,
-            'gu'      => Lang::isGujarati(),
+            'title'       => 'Book ' . $vehicle['name'],
+            'vehicle'     => $vehicle,
+            'gu'          => Lang::isGujarati(),
+            'otpRequired' => otp_required(),
         ], 'front');
     }
 
@@ -107,8 +108,8 @@ class BookingController extends Controller
         if (!preg_match('/^[6-9]\d{9}$/', $mobile)) { $errors[] = 'Valid mobile is required.'; }
         if (!Request::post('terms')) { $errors[] = 'Please accept the Terms & Conditions.'; }
 
-        // OTP must be verified for this mobile.
-        if (Session::get('otp_verified_mobile') !== $mobile) {
+        // OTP must be verified for this mobile — only when OTP is enabled + deliverable.
+        if (otp_required() && Session::get('otp_verified_mobile') !== $mobile) {
             $errors[] = 'Please verify your mobile with OTP.';
         }
 

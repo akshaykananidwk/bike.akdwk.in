@@ -11,6 +11,14 @@ use App\Core\Settings;
  */
 class Whatsapp
 {
+    /** True when the WhatsApp API is enabled and its URL + key are configured. */
+    public static function isConfigured(): bool
+    {
+        return Settings::get('wa_enabled') === '1'
+            && (string)Settings::getSecret('wa_api_url', '') !== ''
+            && (string)Settings::getSecret('wa_api_key', '') !== '';
+    }
+
     /** Render a template body with {var} substitution for the given locale. */
     public static function render(string $key, array $vars = [], ?string $locale = null): string
     {

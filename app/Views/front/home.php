@@ -7,9 +7,9 @@ $siteName = setting('site_name', 'Dwarka Rental');
   <div style="position:absolute;inset:0;opacity:.15;background:radial-gradient(circle at 80% 20%, var(--gold), transparent 40%),radial-gradient(circle at 15% 80%, var(--s), transparent 45%)"></div>
   <div class="container position-relative py-4 py-md-5">
     <div class="text-center mb-3">
-      <span class="jai" style="color:var(--gold);font-size:15px">🙏 જય દ્વારકાધીશ</span>
-      <h1 class="mt-1" style="font-size:30px;line-height:1.15">Rent a Bike, Scooty &amp; Car <br class="d-none d-md-block">in <span style="color:var(--gold)">Dwarka</span></h1>
-      <p style="opacity:.9;margin-bottom:0">દ્વારકામાં બાઇક, એક્ટિવા, સ્કૂટી અને કાર ભાડે — સ્કેન કરો, બુક કરો, રાઇડ કરો 🛵</p>
+      <span class="jai" style="color:var(--gold);font-size:15px">🙏 Jai Dwarkadhish</span>
+      <h1 class="mt-1" style="font-size:30px;line-height:1.15">Bike, Car, Taxi &amp; Tempo Rental <br class="d-none d-md-block">in <span style="color:var(--gold)">Dwarka</span></h1>
+      <p style="opacity:.9;margin-bottom:0">Book bikes, scooters, self-drive cars, taxis, cabs &amp; tempo travellers in Dwarka — scan, book, ride 🛵</p>
     </div>
 
     <!-- Search card -->
@@ -20,7 +20,7 @@ $siteName = setting('site_name', 'Dwarka Rental');
             <label class="form-label small fw-semibold text-muted"><i class="bi bi-scooter"></i> Vehicle</label>
             <select name="category" class="form-select">
               <option value="">All vehicles</option>
-              <?php foreach ($categories as $c): ?><option value="<?= e($c['slug']) ?>"><?= e($gu && $c['name_gu'] ? $c['name_gu'] : $c['name']) ?></option><?php endforeach; ?>
+              <?php foreach ($categories as $c): ?><option value="<?= e($c['slug']) ?>"><?= e($c['name']) ?></option><?php endforeach; ?>
             </select>
           </div>
           <div class="col-6 col-md-3">
@@ -57,7 +57,7 @@ $siteName = setting('site_name', 'Dwarka Rental');
         <div class="col-4 col-md-2">
           <a href="<?= e(base_url('/vehicles?category=' . $c['slug'])) ?>" class="chip h-100">
             <i class="bi <?= e($c['icon'] ?: 'bi-scooter') ?>"></i>
-            <div class="small fw-semibold mt-1"><?= e($gu && $c['name_gu'] ? $c['name_gu'] : $c['name']) ?></div>
+            <div class="small fw-semibold mt-1"><?= e($c['name']) ?></div>
           </a>
         </div>
       <?php endforeach; ?>
@@ -86,7 +86,7 @@ $siteName = setting('site_name', 'Dwarka Rental');
               <span class="pill position-absolute top-0 start-0 m-2" style="background:rgba(0,0,0,.6);color:#fff"><?= e($v['category_name']) ?></span>
             </div>
             <div class="p-2 p-md-3">
-              <div class="fw-semibold text-truncate"><?= e($gu && $v['name_gu'] ? $v['name_gu'] : $v['name']) ?></div>
+              <div class="fw-semibold text-truncate"><?= e($v['name']) ?></div>
               <div class="d-flex align-items-center gap-1 my-1" style="color:var(--gold);font-size:12px">
                 <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
                 <span class="text-muted ms-1">4.5</span>
@@ -147,16 +147,25 @@ $siteName = setting('site_name', 'Dwarka Rental');
   <section class="py-4">
     <div class="card border-0 shadow-soft" style="border-radius:16px">
       <div class="card-body">
-        <h2 class="section-title mb-2">Vehicle rental across Devbhoomi Dwarka</h2>
+        <h2 class="section-title mb-2">Bike, Car, Taxi &amp; Tempo Rental in Dwarka</h2>
         <p class="text-muted small mb-2">
-          <?= e($siteName) ?> offers affordable <strong>bike rental, scooty &amp; Activa on rent, self-drive car rental,
-          tempo traveller and cycle hire in Dwarka</strong>. Whether you are here for
-          <strong>Dwarkadhish Temple</strong> darshan, a trip to <strong>Beyt Dwarka</strong>, <strong>Nageshwar Jyotirlinga</strong>,
-          <strong>Gomti Ghat</strong>, <strong>Rukmini Temple</strong>, <strong>Okha</strong> or <strong>Mithapur</strong> —
-          book a two-wheeler or car online and pick it up nearby. Hourly and daily packages available.
+          <?= e($siteName) ?> is your one-stop platform for <strong>bike rental, scooty &amp; Activa on rent,
+          self-drive car rental, taxi &amp; cab booking, tempo traveller hire and cycle rental in Dwarka</strong>.
+          Book online in minutes for <strong>Dwarkadhish Temple</strong> darshan, local sightseeing, or outstation trips.
+        </p>
+        <p class="text-muted small mb-2">
+          Popular services include <strong>Dwarka darshan by taxi</strong>, <strong>self-drive cars</strong> and
+          <strong>two-wheelers on rent</strong>, plus cab routes like <strong>Dwarka to Somnath</strong>,
+          <strong>Dwarka to Okha &amp; Beyt Dwarka</strong>, <strong>Dwarka to Nageshwar Jyotirlinga</strong>,
+          <strong>Dwarka to Jamnagar, Rajkot, Porbandar</strong> and <strong>Dwarka airport &amp; railway station pickup</strong>.
+          One-way and round-trip cabs, 12 &amp; 17-seater tempo travellers, hourly and daily packages — all at the best price.
         </p>
         <div class="d-flex flex-wrap gap-1">
-          <?php foreach (['Bike rent in Dwarka','Scooty on rent','Activa rental','Self-drive car','Tempo traveller','Cycle hire','Beyt Dwarka','Nageshwar','Gomti Ghat','Okha'] as $k): ?>
+          <?php foreach ([
+            'Bike rent in Dwarka','Scooty on rent','Activa rental','Self-drive car','Taxi service','Cab booking',
+            'Car with driver','Tempo traveller','Dwarka darshan taxi','Dwarka to Somnath','Dwarka to Okha',
+            'Beyt Dwarka','Nageshwar','Gomti Ghat','Cycle hire'
+          ] as $k): ?>
             <span class="pill" style="background:#eef2f8;color:var(--muted)"><?= e($k) ?></span>
           <?php endforeach; ?>
         </div>

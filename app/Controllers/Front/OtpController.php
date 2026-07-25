@@ -42,8 +42,13 @@ class OtpController extends Controller
             'created_at' => now(),
         ]);
 
-        // Deliver via WhatsApp (the {amount} placeholder carries the OTP in the template).
-        Whatsapp::notify('otp_verification', $mobile, ['amount' => $otp]);
+        // Deliver via WhatsApp immediately (not queued) so it arrives instantly.
+        // The {amount} placeholder carries the OTP in the template.
+        $msg = Whatsapp::render('otp_verification', ['amount' => $otp]);
+        if (Whatsapp::isConfigured()) {
+            $res = Whatsapp::sendNow($mobile, $msg);
+            Whatsapp::log('out', $mobile, $msg, $res['ok'] ? 'otp_sent' : 'otp_failed', $res['response'], 'otp_verification');
+        }
 
         $resp = ['ok' => true, 'message' => 'OTP sent to your WhatsApp.'];
         // In debug mode only, expose the OTP to ease local testing.

@@ -1,7 +1,7 @@
 <?php
 /** @var array $vehicle, bool $gu */
 $errs = \App\Core\Session::flash('errors') ?? [];
-$vname = $gu && $vehicle['name_gu'] ? $vehicle['name_gu'] : $vehicle['name'];
+$vname = $vehicle['name'];
 ?>
 <?php if ($errs): ?><div class="alert alert-danger"><?php foreach ($errs as $e): ?><div><?= e($e[0]) ?></div><?php endforeach; ?></div><?php endif; ?>
 
@@ -52,7 +52,7 @@ $vname = $gu && $vehicle['name_gu'] ? $vehicle['name_gu'] : $vehicle['name'];
       <div class="col-md-6"><label class="form-label"><?= e(__('mobile')) ?> *</label>
         <div class="input-group">
           <input name="customer_mobile" id="cmobile" class="form-control" value="<?= e(old('customer_mobile')) ?>" maxlength="10" required>
-          <button type="button" class="btn btn-outline-primary" id="sendOtpBtn"><?= e(__('send_otp')) ?></button>
+          <?php if ($otpRequired): ?><button type="button" class="btn btn-outline-primary" id="sendOtpBtn"><?= e(__('send_otp')) ?></button><?php endif; ?>
         </div>
       </div>
       <div class="col-12 d-none" id="otpRow">
@@ -94,6 +94,7 @@ $vname = $gu && $vehicle['name_gu'] ? $vehicle['name_gu'] : $vehicle['name'];
 (function(){
   const VID = <?= (int)$vehicle['id'] ?>;
   const CSRF = window.CSRF;
+  const OTP_REQUIRED = <?= $otpRequired ? 'true' : 'false' ?>;
   let step = 1; const maxStep = 4;
   let availabilityOk = false;
 
@@ -144,7 +145,7 @@ $vname = $gu && $vehicle['name_gu'] ? $vehicle['name_gu'] : $vehicle['name'];
     const terms=document.getElementById('terms').checked;
     if(!name){ alert('Enter your name'); return false; }
     if(!/^[6-9]\d{9}$/.test(mob)){ alert('Enter a valid 10-digit mobile'); return false; }
-    if(document.getElementById('otpOk').value!=='1'){ alert('Please verify your mobile with OTP'); return false; }
+    if(OTP_REQUIRED && document.getElementById('otpOk').value!=='1'){ alert('Please verify your mobile with OTP'); return false; }
     if(!dl){ alert('Upload your Driving Licence photo'); return false; }
     if(!terms){ alert('Please accept the Terms & Conditions'); return false; }
     return true;
@@ -175,7 +176,8 @@ $vname = $gu && $vehicle['name_gu'] ? $vehicle['name_gu'] : $vehicle['name'];
     else { msg.innerHTML='<span class="text-danger">'+r.error+'</span>'; }
   };
 
-  // OTP
+  // OTP (only wired when required — the buttons don't exist otherwise)
+  if(OTP_REQUIRED){
   document.getElementById('sendOtpBtn').onclick=async function(){
     const mob=document.getElementById('cmobile').value.trim();
     const msg=document.getElementById('otpMsg');
@@ -194,6 +196,7 @@ $vname = $gu && $vehicle['name_gu'] ? $vehicle['name_gu'] : $vehicle['name'];
     if(r.ok){ msg.innerHTML='<span class="text-success"><i class="bi bi-check-circle"></i> Verified</span>'; document.getElementById('otpOk').value='1'; }
     else { msg.innerHTML='<span class="text-danger">'+r.error+'</span>'; }
   };
+  } // end if(OTP_REQUIRED)
 
   show();
 })();

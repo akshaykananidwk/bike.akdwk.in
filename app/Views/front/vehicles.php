@@ -10,7 +10,7 @@
       <div class="col-6 col-md-3">
         <select name="category" class="form-select form-select-sm">
           <option value="">All categories</option>
-          <?php foreach ($categories as $c): ?><option value="<?= e($c['slug']) ?>" <?= $filters['category']===$c['slug']?'selected':'' ?>><?= e($gu && $c['name_gu'] ? $c['name_gu'] : $c['name']) ?></option><?php endforeach; ?>
+          <?php foreach ($categories as $c): ?><option value="<?= e($c['slug']) ?>" <?= $filters['category']===$c['slug']?'selected':'' ?>><?= e($c['name']) ?></option><?php endforeach; ?>
         </select>
       </div>
       <div class="col-6 col-md-3">
@@ -54,7 +54,7 @@
           <?php endif; ?>
         </div>
         <div class="p-2 p-md-3">
-          <div class="fw-semibold text-truncate"><?= e($gu && $v['name_gu'] ? $v['name_gu'] : $v['name']) ?></div>
+          <div class="fw-semibold text-truncate"><?= e($v['name']) ?></div>
           <div class="text-muted" style="font-size:11px"><?= e(str_replace('_',' ',$v['transmission'])) ?> · <?= e($v['fuel']) ?></div>
           <div class="mt-1"><span class="price-tag fs-5"><?= money($v['price_day']) ?></span><span class="text-muted small">/<?= e(__('per_day')) ?></span>
             <?php if ($v['price_hour']>0): ?><span class="text-muted small ms-1">· <?= money($v['price_hour']) ?>/<?= e(__('per_hour')) ?></span><?php endif; ?></div>

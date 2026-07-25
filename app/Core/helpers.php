@@ -145,6 +145,19 @@ if (!function_exists('now')) {
     }
 }
 
+if (!function_exists('otp_required')) {
+    /**
+     * Mobile OTP at checkout is required only when the admin has it enabled AND
+     * WhatsApp is configured to actually deliver it. Otherwise the booking flow
+     * proceeds with name + mobile so customers are never blocked.
+     */
+    function otp_required(): bool
+    {
+        return \App\Core\Settings::get('otp_enabled', '1') === '1'
+            && \App\Services\Whatsapp::isConfigured();
+    }
+}
+
 if (!function_exists('log_line')) {
     function log_line(string $file, string $message): void
     {

@@ -18,7 +18,7 @@
     </div>
   </div>
   <div class="col-md-6">
-    <h4><?= e($gu && $vehicle['name_gu'] ? $vehicle['name_gu'] : $vehicle['name']) ?></h4>
+    <h4><?= e($vehicle['name']) ?></h4>
     <div class="text-muted mb-2"><?= e($vehicle['category_name']) ?> · <?= e($vehicle['brand']) ?> <?= e($vehicle['model']) ?></div>
     <div class="d-flex gap-2 flex-wrap mb-3">
       <span class="badge bg-light text-dark border"><i class="bi bi-gear"></i> <?= e(str_replace('_',' ',$vehicle['transmission'])) ?></span>

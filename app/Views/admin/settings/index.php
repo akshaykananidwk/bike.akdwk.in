@@ -27,6 +27,7 @@
       <div class="col-md-6"><label class="form-label">Default Commission Type</label><select name="commission_type" class="form-select"><option value="percent" <?= ($s['commission_type']??'')==='percent'?'selected':'' ?>>Percentage %</option><option value="fixed" <?= ($s['commission_type']??'')==='fixed'?'selected':'' ?>>Fixed ₹</option></select></div>
       <div class="col-md-6"><label class="form-label">Default Commission Value</label><input name="commission_value" type="number" step="0.01" class="form-control" value="<?= $g('commission_value','10') ?>"></div>
       <div class="col-12"><div class="form-check"><input type="checkbox" name="commission_on_base_only" value="1" class="form-check-input" id="cob" <?= $chk('commission_on_base_only') ?>><label class="form-check-label" for="cob">Calculate commission on base rental only (exclude deposit &amp; taxes)</label></div></div>
+      <div class="col-12"><div class="form-check form-switch"><input type="checkbox" name="otp_enabled" value="1" class="form-check-input" id="otpen" <?= (!array_key_exists('otp_enabled', $s) || $chk('otp_enabled')) ? 'checked' : '' ?>><label class="form-check-label" for="otpen"><strong>Require mobile OTP at checkout</strong> <span class="text-muted small">(auto-skipped until WhatsApp API is configured, so bookings are never blocked)</span></label></div></div>
     </div></div></div>
 
     <div class="col-lg-6"><div class="card"><div class="card-header fw-bold">Payment Methods</div><div class="card-body">
