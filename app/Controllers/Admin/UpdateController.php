@@ -46,6 +46,23 @@ class UpdateController extends Controller
         ], 'admin');
     }
 
+    /** Apply any pending DB migrations (useful after a manual file upload). */
+    public function migrate(): string
+    {
+        if (!Auth::is('super_admin')) { http_response_code(403); return 'Forbidden'; }
+        $this->verifyCsrf();
+        try {
+            $applied = \App\Services\MigrationRunner::runPending();
+            Session::flash('success', $applied
+                ? 'Applied ' . count($applied) . ' migration(s): ' . implode(', ', $applied)
+                : 'Database is already up to date — no pending migrations.');
+            ActivityLog::record('updates.migrate', 'database', null, [], ['applied' => $applied]);
+        } catch (\Throwable $e) {
+            Session::flash('error', 'Migration failed: ' . $e->getMessage());
+        }
+        return $this->redirect('/admin/updates');
+    }
+
     public function check(): string
     {
         $this->verifyCsrf();

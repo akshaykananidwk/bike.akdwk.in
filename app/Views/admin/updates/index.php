@@ -24,6 +24,10 @@
         <div><div class="text-muted small">Current version</div><div class="fw-bold"><?= e($version['version'] ?? '1.0.0') ?></div></div>
         <div class="text-end"><div class="text-muted small">Commit</div><code><?= e(substr($version['commit'] ?? '', 0, 7) ?: '—') ?></code></div>
       </div>
+      <form method="post" action="<?= e(base_url('/admin/updates/migrate')) ?>" class="mb-2" onsubmit="return confirm('Apply any pending database migrations now?')">
+        <?= csrf_field() ?>
+        <button class="btn btn-outline-dark w-100"><i class="bi bi-database-gear"></i> Run DB Migrations (after manual upload)</button>
+      </form>
       <button class="btn btn-outline-primary w-100 mb-2" id="checkBtn"><i class="bi bi-arrow-repeat"></i> Check for Update</button>
       <div id="checkResult"></div>
       <button class="btn btn-success w-100 mt-2 d-none" id="updateBtn" onclick="return runUpdate()"><i class="bi bi-download"></i> Update Now</button>

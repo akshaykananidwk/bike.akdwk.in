@@ -102,6 +102,7 @@ $router->group(['prefix' => '/admin', 'middleware' => ['AdminAuth']], function (
     $r->get('/backup', 'Admin\BackupController@download');
     $r->any('/updates', 'Admin\UpdateController@index');
     $r->post('/updates/check', 'Admin\UpdateController@check');
+    $r->post('/updates/migrate', 'Admin\UpdateController@migrate');
     $r->post('/updates/test', 'Admin\UpdateController@testConnection');
     $r->post('/updates/run', 'Admin\UpdateController@run');
 });
